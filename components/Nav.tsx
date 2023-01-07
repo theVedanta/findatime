@@ -1,14 +1,32 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import EventIcon from "@mui/icons-material/Event";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 
 const Nav = () => {
     return (
         <Box
-            bgcolor="secondary.main"
             display="flex"
-            justifyContent="space-between"
-            px={10}
             width="100%"
-        ></Box>
+            justifyContent="space-between"
+            alignItems="center"
+            px={6}
+            py={2}
+            color="primary.100"
+            bgcolor="primary.900"
+        >
+            <MenuIcon />
+
+            <Box display="flex" alignItems="center">
+                <EventAvailableIcon />
+                &nbsp;
+                <Typography fontWeight={500} fontSize={22}>
+                    Plan a Meeting
+                </Typography>
+            </Box>
+
+            <EventIcon />
+        </Box>
     );
 };
 
