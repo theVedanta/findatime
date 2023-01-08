@@ -4,3 +4,6 @@
     box-sizing: border-box;
     outline: none;
 }
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}

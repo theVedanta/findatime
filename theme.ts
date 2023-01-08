@@ -4,6 +4,7 @@ const theme = createTheme({
     palette: {
         primary: {
             100: "white",
+            200: "#F5F5F5",
             500: "#74B78F",
             900: "#313131",
         },

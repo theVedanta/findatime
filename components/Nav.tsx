@@ -3,7 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import EventIcon from "@mui/icons-material/Event";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 
-const Nav = () => {
+const Nav = ({ name = "" }) => {
     return (
         <Box
             display="flex"
@@ -14,16 +14,23 @@ const Nav = () => {
             py={2}
             color="primary.100"
             bgcolor="primary.900"
+            zIndex="40"
         >
             <MenuIcon />
 
-            <Box display="flex" alignItems="center">
-                <EventAvailableIcon />
-                &nbsp;
+            {!name ? (
+                <Box display="flex" alignItems="center">
+                    <EventAvailableIcon />
+                    &nbsp;
+                    <Typography fontWeight={500} fontSize={22}>
+                        Plan a Meeting
+                    </Typography>
+                </Box>
+            ) : (
                 <Typography fontWeight={500} fontSize={22}>
-                    Plan a Meeting
+                    {name}
                 </Typography>
-            </Box>
+            )}
 
             <EventIcon />
         </Box>

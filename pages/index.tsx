@@ -114,24 +114,30 @@ const Index = () => {
                     Let all participants choose times for one specific day.
                 </Typography>
 
-                <Typography mt={5} mb={1} fontWeight={600}>
-                    Pick a date for your meet
-                </Typography>
-                <Box width="50%" mt={2}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                            disableFuture
-                            label="Date"
-                            openTo="year"
-                            views={["year", "month", "day"]}
-                            value={date}
-                            onChange={(val) => {
-                                setDate(val);
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
-                </Box>
+                {poll === "day" && (
+                    <>
+                        <Typography mt={5} mb={1} fontWeight={600}>
+                            Pick a date for your meet
+                        </Typography>
+                        <Box width="50%" mt={2}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    disableFuture
+                                    label="Date"
+                                    openTo="year"
+                                    views={["year", "month", "day"]}
+                                    value={date}
+                                    onChange={(val) => {
+                                        setDate(val);
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} />
+                                    )}
+                                />
+                            </LocalizationProvider>
+                        </Box>
+                    </>
+                )}
 
                 <Button sx={{ marginTop: 5 }}>Create Event</Button>
             </Box>

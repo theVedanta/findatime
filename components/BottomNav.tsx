@@ -1,4 +1,7 @@
 import { Box, Typography } from "@mui/material";
+import EventIcon from "@mui/icons-material/Event";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const BottomNav = () => {
     return (
@@ -15,12 +18,31 @@ const BottomNav = () => {
             bottom={0}
             left={0}
         >
-            <Box display="flex">
-                <Typography>Plan a meet</Typography>
-                <Typography ml={3}>Learn More</Typography>
+            <Box display="flex" width="33.33333333%">
+                <Typography display="flex" alignItems="center">
+                    <EventIcon /> &nbsp;&nbsp;Plan a meet
+                </Typography>
+                <Typography display="flex" alignItems="center" ml={3}>
+                    <InfoOutlinedIcon />
+                    &nbsp;&nbsp;Learn More
+                </Typography>
             </Box>
-            <Typography>Support the Project</Typography>
-            <Typography>FindaTime © 2022</Typography>
+            <Typography
+                display="flex"
+                alignItems="center"
+                width="33.33333333%"
+                justifyContent="center"
+            >
+                <FavoriteBorderOutlinedIcon />
+                &nbsp;&nbsp;Support the Project
+            </Typography>
+            <Typography
+                width="33.33333333%"
+                display="flex"
+                justifyContent="flex-end"
+            >
+                FindaTime © 2022
+            </Typography>
         </Box>
     );
 };
