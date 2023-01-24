@@ -14,7 +14,7 @@ interface Meeting {
 const meetingSchema: mongoose.Schema = new mongoose.Schema<Meeting>(
     {
         owner: String,
-        code: { type: String, required: true },
+        code: { type: String, required: true, unique: true },
         name: { type: String, required: true },
         note: String,
         duration: String,

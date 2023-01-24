@@ -48,3 +48,11 @@ app.post("/create", async (req: Request, res: Response) => {
         res.json({ err });
     }
 });
+app.get("/event/:code", async (req, res) => {
+    try {
+        const event = await Meeting.findOne({ code: req.params.code });
+        res.json({ event });
+    } catch (err) {
+        res.json({ err });
+    }
+});
