@@ -24,7 +24,7 @@ import {
 import { BASE_WEB_URL } from "../base";
 import UserIcon from "../components/UserIcon";
 
-const LeftBar = () => {
+const LeftBar = ({ event }: { event: any }) => {
     return (
         <Box
             position="fixed"
@@ -55,10 +55,10 @@ const LeftBar = () => {
                     fontSize={18}
                 >
                     <AccessTimeOutlinedIcon />
-                    &nbsp;Duration: 30 Minutes
+                    &nbsp;Duration: {event && event.duration}
                 </Typography>
                 <Typography fontSize={14} mt={1} sx={{ opacity: 0.6 }}>
-                    *This meeting poll was created in India GMT+4 timezone
+                    *This meeting poll was created in India GMT+5 timezone
                 </Typography>
                 <Typography
                     fontSize={14}
@@ -89,7 +89,9 @@ const LeftBar = () => {
                         overflow="scroll"
                         className="no-scrollbar"
                     >
-                        <Typography whiteSpace="nowrap">Hello World</Typography>
+                        <Typography whiteSpace="nowrap">{`${BASE_WEB_URL}/${
+                            event && event.code
+                        }`}</Typography>
                     </Box>
                     <Box
                         bgcolor="primary.500"

@@ -15,12 +15,14 @@ import {
 import { useEffect, useState } from "react";
 import { yellow } from "@mui/material/colors";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { days, months } from "../base";
+import { BASE_API_URL, days, months } from "../base";
+import axios from "axios";
 
 const Event = () => {
     const router = useRouter();
     const { eventID } = router.query;
     const [timezone, setTimezone] = useState("India (GMT+5)");
+    const [event, setEvent] = useState({});
     const [dates, setDates] = useState<Date[]>([]);
     const slots = [
         "1AM",
@@ -42,14 +44,25 @@ const Event = () => {
             dts.push(new Date(newDate));
         }
 
-        console.log(dts);
         setDates(dts);
-        console.log(dts);
-    }, []);
+
+        const getEvent = async () => {
+            const res = await axios.get(`${BASE_API_URL}/event/${eventID}`);
+
+            if (res.data.err) {
+                return;
+            }
+
+            setEvent(res.data.event);
+            setTimezone(res.data.event.timezone);
+        };
+
+        eventID && getEvent();
+    }, [eventID]);
 
     return (
         <>
-            <LeftBar />
+            <LeftBar event={event} />
             <Nav name="Event name" />
 
             <Box pl="26%" mt={5}>
