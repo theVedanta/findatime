@@ -7,6 +7,7 @@ const theme = createTheme({
             200: "#F5F5F5",
             500: "#74B78F",
             900: "#313131",
+            800: "rgba(0, 0, 0, 0.2)",
         },
     },
     typography: {
@@ -42,6 +43,13 @@ const theme = createTheme({
                     color: "#ffffff",
                     textTransform: "none",
                     width: "100%",
+                },
+                text: {
+                    textTransform: "none",
+                    color: "#313131",
+                    ":hover": {
+                        background: "#d7dbce",
+                    },
                 },
             },
             defaultProps: {

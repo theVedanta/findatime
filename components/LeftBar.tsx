@@ -32,8 +32,9 @@ const LeftBar = () => {
             top={0}
             height="100vh"
             width="24%"
-            borderRight="2px solid #000"
-            zIndex="-1"
+            borderRight="2px solid"
+            borderColor="primary.900"
+            zIndex={10}
             pt={8}
             pb={2}
             px={4}
@@ -170,13 +171,13 @@ const LeftBar = () => {
                     </Typography>
 
                     <Box display="flex" alignItems="center" mt={1}>
-                        <UserIcon src="/assets/sample.jpeg" />
+                        <UserIcon letter="ID" />
                         <Typography fontSize={18} ml={2}>
                             Ishaan Das
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" mt={1}>
-                        <UserIcon src="/assets/sample.jpeg" />
+                        <UserIcon letter="ID" />
                         <Typography fontSize={18} ml={2}>
                             Ishaan Das
                         </Typography>

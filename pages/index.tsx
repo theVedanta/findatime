@@ -1,28 +1,72 @@
 import {
+    Alert,
     Box,
     Button,
     FormControl,
     FormControlLabel,
-    FormLabel,
     InputLabel,
     MenuItem,
     Radio,
     RadioGroup,
     Select,
+    Snackbar,
     TextField,
     Typography,
 } from "@mui/material";
 import Nav from "../components/Nav";
-import { useState } from "react";
+import React, { useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import BottomNav from "../components/BottomNav";
+import axios from "axios";
+import { BASE_API_URL } from "../base";
 
 const Index = () => {
     const [duration, setDuration] = useState("1 Hour");
-    const [zone, setZone] = useState("India (GMT+5)");
-    const [poll, setPoll] = useState("day");
-    const [date, setDate] = useState<any>();
+    const [timezone, setTimezone] = useState("India (GMT+5)");
+    const [type, setType] = useState("day");
+    const [date, setDate] = useState(new Date());
+    const [name, setName] = useState("");
+    const [note, setNote] = useState("");
+    const [err, setErr] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
+
+    const showErr = (msgToSet: string) => {
+        setErrMsg(msgToSet);
+        setErr(true);
+        setTimeout(() => setErr(false), 5000);
+    };
+
+    const handleClose = (
+        event: React.SyntheticEvent | Event,
+        reason?: string
+    ) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setErr(false);
+    };
+
+    const createEvent = async () => {
+        if (name === "")
+            return showErr("Please fill in all the required fields");
+
+        const res = await axios.post(`${BASE_API_URL}/create`, {
+            name,
+            type,
+            note,
+            date,
+            timezone,
+            duration,
+        });
+
+        if (!res.data.done) {
+            return showErr("Some error occurred");
+        }
+
+        window.location.href = `/${res.data.code}`;
+    };
 
     return (
         <>
@@ -32,9 +76,14 @@ const Index = () => {
                 <Typography mb={4} fontWeight={400} fontSize={28}>
                     Meeting Info
                 </Typography>
-                <TextField label="Event name" required />
+                <TextField
+                    onChange={(e) => setName(e.target.value.trim())}
+                    label="Event name"
+                    required
+                />
                 <TextField
                     label="Note (optional)"
+                    onChange={(e) => setNote(e.target.value.trim())}
                     multiline
                     rows={3}
                     maxRows={6}
@@ -70,8 +119,8 @@ const Index = () => {
                             name="time-zone"
                             id="time-zone"
                             label="Time zone"
-                            value={zone}
-                            onChange={(e) => setZone(e.target.value)}
+                            value={timezone}
+                            onChange={(e) => setTimezone(e.target.value)}
                         >
                             <MenuItem value={"India (GMT+5)"}>
                                 India (GMT+5)
@@ -86,8 +135,8 @@ const Index = () => {
                 <FormControl>
                     <RadioGroup
                         row
-                        value={poll}
-                        onChange={(e) => setPoll(e.target.value)}
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
                         name="radio-buttons-group"
                     >
                         <FormControlLabel
@@ -114,7 +163,7 @@ const Index = () => {
                     Let all participants choose times for one specific day.
                 </Typography>
 
-                {poll === "day" && (
+                {type === "day" && (
                     <>
                         <Typography mt={5} mb={1} fontWeight={600}>
                             Pick a date for your meet
@@ -122,13 +171,13 @@ const Index = () => {
                         <Box width="50%" mt={2}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
-                                    disableFuture
+                                    disablePast
                                     label="Date"
                                     openTo="year"
                                     views={["year", "month", "day"]}
                                     value={date}
-                                    onChange={(val) => {
-                                        setDate(val);
+                                    onChange={(val: any) => {
+                                        setDate(new Date(val.$d));
                                     }}
                                     renderInput={(params) => (
                                         <TextField {...params} />
@@ -139,10 +188,28 @@ const Index = () => {
                     </>
                 )}
 
-                <Button sx={{ marginTop: 5 }}>Create Event</Button>
+                <Button onClick={createEvent} sx={{ marginTop: 5 }}>
+                    Create Event
+                </Button>
             </Box>
 
             <BottomNav />
+
+            <Snackbar
+                open={err}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+                <Alert
+                    variant="filled"
+                    onClose={handleClose}
+                    severity="error"
+                    sx={{ width: "100%" }}
+                >
+                    {errMsg}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
