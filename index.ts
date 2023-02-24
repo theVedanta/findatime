@@ -5,6 +5,7 @@ import Meeting from "./models/Meeting";
 import createCode from "./createCode";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { formatDistanceToNow } from "date-fns";
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
 }
@@ -39,6 +40,7 @@ app.post("/create", async (req: Request, res: Response) => {
         type: req.body.type,
         timezone: req.body.timezone,
         date: req.body.date,
+        active: new Date(),
     });
 
     try {
@@ -51,8 +53,22 @@ app.post("/create", async (req: Request, res: Response) => {
 app.get("/event/:code", async (req, res) => {
     try {
         const event = await Meeting.findOne({ code: req.params.code });
+        await Meeting.updateOne(
+            { code: req.params.code },
+            {
+                $set: {
+                    active: new Date(),
+                },
+            }
+        );
         res.json({ event });
     } catch (err) {
         res.json({ err });
     }
 });
+
+// setInterval(async () => {
+//     const expiredMeets = await Meeting.find({
+
+//     });
+// }, 10000000);

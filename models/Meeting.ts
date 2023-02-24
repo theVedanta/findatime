@@ -6,9 +6,10 @@ interface Meeting {
     name: string;
     note?: string;
     duration: string;
-    type: string;
+    type: "week" | "specific" | "day";
     timezone: string;
     date: Date;
+    active: Date;
 }
 
 const meetingSchema: mongoose.Schema = new mongoose.Schema<Meeting>(
@@ -21,6 +22,7 @@ const meetingSchema: mongoose.Schema = new mongoose.Schema<Meeting>(
         type: { type: String, required: true },
         timezone: String,
         date: Date,
+        active: Date,
     },
     { versionKey: false, timestamps: true }
 );
