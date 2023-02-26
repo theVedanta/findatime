@@ -72,7 +72,7 @@ const Index = () => {
         <>
             <Nav />
 
-            <Box mt={6} px={64}>
+            <Box mt={{ xs: 2, sm: 3, xl: 6 }} px={{ xs: 5, sm: 10, xl: 64 }}>
                 <Typography mb={4} fontWeight={400} fontSize={28}>
                     Meeting Info
                 </Typography>
@@ -103,6 +103,9 @@ const Index = () => {
                             value={duration}
                             onChange={(e) => setDuration(e.target.value)}
                         >
+                            <MenuItem value={"30 Mintutes"}>
+                                30 Minutes
+                            </MenuItem>
                             <MenuItem value={"1 Hour"}>1 Hour</MenuItem>
                             <MenuItem value={"2 Hours"}>2 Hours</MenuItem>
                             <MenuItem value={"3 Hours"}>3 Hours</MenuItem>
@@ -146,7 +149,7 @@ const Index = () => {
                             sx={{ marginRight: 10 }}
                         />
                         <FormControlLabel
-                            value="days"
+                            value="week"
                             control={<Radio />}
                             label="Days of the week"
                             sx={{ marginRight: 10 }}
@@ -173,8 +176,8 @@ const Index = () => {
                                 <DatePicker
                                     disablePast
                                     label="Date"
-                                    openTo="year"
-                                    views={["year", "month", "day"]}
+                                    openTo="day"
+                                    views={["day"]}
                                     value={date}
                                     onChange={(val: any) => {
                                         setDate(new Date(val.$d));

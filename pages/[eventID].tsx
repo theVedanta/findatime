@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import Nav from "../components/Nav";
 import LeftBar from "../components/LeftBar";
 import {
+    Alert,
     Box,
     Button,
     FormControl,
@@ -9,6 +10,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
+    Snackbar,
     TextField,
     Typography,
 } from "@mui/material";
@@ -18,12 +20,32 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { BASE_API_URL, days, months } from "../base";
 import axios from "axios";
 
+interface Meeting {
+    owner?: string;
+    name?: string;
+    note?: string;
+    duration?: string;
+    type?: string;
+    timezone?: string;
+    date?: Date;
+    active?: Date;
+}
+interface Selection {
+    date: Date;
+    slot: string;
+    // box: number;
+}
+
 const Event = () => {
     const router = useRouter();
     const { eventID } = router.query;
     const [timezone, setTimezone] = useState("India (GMT+5)");
-    const [event, setEvent] = useState({});
+    const [event, setEvent] = useState<Meeting>({});
     const [dates, setDates] = useState<Date[]>([]);
+    const [selections, setSelections] = useState<Selection[]>([]);
+    const [name, setName] = useState("New user");
+    const [err, setErr] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
     const slots = [
         "1AM",
         "2AM",
@@ -35,6 +57,82 @@ const Event = () => {
         "8AM",
         "9AM",
     ];
+
+    const showErr = (msgToSet: string) => {
+        setErrMsg(msgToSet);
+        setErr(true);
+        setTimeout(() => setErr(false), 5000);
+    };
+
+    const handleClose = (
+        event: React.SyntheticEvent | Event,
+        reason?: string
+    ) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setErr(false);
+    };
+
+    const matchDate = (
+        date1Create: Date,
+        date2Create: Date,
+        invert: boolean = false
+    ) => {
+        const date1 = new Date(date1Create);
+        const date2 = new Date(date2Create);
+
+        return invert
+            ? date1.getFullYear() !== date2.getFullYear() &&
+                  date1.getMonth() !== date2.getMonth() &&
+                  date1.getDate() !== date2.getDate()
+            : date1.getFullYear() === date2.getFullYear() &&
+                  date1.getMonth() === date2.getMonth() &&
+                  date1.getDate() === date2.getDate();
+    };
+
+    const boxClick = async (date: Date, slot: string) => {
+        selections.find(
+            (elem) => elem.slot === slot && matchDate(elem.date, date)
+        )
+            ? setSelections(
+                  selections.filter(
+                      (elem) =>
+                          elem.slot !== slot && matchDate(elem.date, date, true)
+                  )
+              )
+            : setSelections([
+                  ...selections,
+                  {
+                      date,
+                      slot,
+                      // box: 1,
+                  },
+              ]);
+
+        try {
+            const updated: any = await axios.put(
+                `${BASE_API_URL}/update/${eventID}`,
+                {
+                    selections: [
+                        ...selections,
+                        {
+                            date,
+                            slot,
+                            // box: 1,
+                        },
+                    ],
+                }
+            );
+            // console.log(updated);
+            if (!updated.done) {
+                showErr("Some error occurred");
+            }
+        } catch (err) {
+            showErr("Some error occurred");
+        }
+    };
 
     useEffect(() => {
         const dts = [];
@@ -50,10 +148,11 @@ const Event = () => {
             const res = await axios.get(`${BASE_API_URL}/event/${eventID}`);
 
             if (res.data.err) {
-                return;
+                showErr("Some error occurred");
             }
 
             setEvent(res.data.event);
+            setSelections(res.data.event && res.data.event.selections);
             setTimezone(res.data.event.timezone);
         };
 
@@ -63,17 +162,18 @@ const Event = () => {
     return (
         <>
             <LeftBar event={event} />
-            <Nav name="Event name" />
+            <Nav name={event && event.name} />
 
             <Box pl="26%" mt={5}>
                 <Box display="flex" width="80%">
                     <TextField
                         sx={{ width: "40%", marginRight: 2 }}
                         label="Your name*"
+                        defaultValue={name}
                     />
                     <FormControl sx={{ width: "20%", marginRight: 2 }}>
                         <InputLabel required id="duration">
-                            Duration
+                            Timezone
                         </InputLabel>
                         <Select
                             required
@@ -137,12 +237,16 @@ const Event = () => {
                     <Typography fontSize={20} mr={3}>
                         October 1 - October 7
                     </Typography>
-                    <Button variant="text">
-                        <ChevronLeft />
-                    </Button>
-                    <Button variant="text">
-                        <ChevronRight />
-                    </Button>
+                    {event && event.type !== "week" && (
+                        <>
+                            <Button variant="text">
+                                <ChevronLeft />
+                            </Button>
+                            <Button variant="text">
+                                <ChevronRight />
+                            </Button>
+                        </>
+                    )}
                 </Box>
 
                 <Box
@@ -151,6 +255,7 @@ const Event = () => {
                     width="100%"
                     height="66vh"
                     overflow="scroll"
+                    position="relative"
                 >
                     <Grid
                         container
@@ -158,11 +263,21 @@ const Event = () => {
                         width={`${dates.length * 15}%`}
                         columns={dates.length + 1}
                     >
-                        <Grid item width="3%">
+                        {/* COLUMN 1 */}
+                        <Grid
+                            item
+                            width="3%"
+                            position="sticky"
+                            left="0"
+                            top="0"
+                            zIndex={10}
+                        >
+                            {/* NULL BOX */}
                             <Box height="5vh"></Box>
+                            {/* SLOTS */}
                             {slots.map((slot) => (
-                                <Grid item width="100%" key={slot}>
-                                    <Box height="8vh">
+                                <Grid item key={slot}>
+                                    <Box height="8vh" bgcolor="white">
                                         <Typography>{slot}</Typography>
                                     </Box>
                                 </Grid>
@@ -179,6 +294,10 @@ const Event = () => {
                                     justifyContent="center"
                                     alignItems="center"
                                     height="5vh"
+                                    position="sticky"
+                                    top="0"
+                                    zIndex={10}
+                                    bgcolor="white"
                                 >
                                     <Typography>
                                         {months[date.getMonth()].slice(0, 3)}{" "}
@@ -189,54 +308,49 @@ const Event = () => {
                                 {slots.map((slot) => (
                                     <Grid item width="100%" key={slot}>
                                         <Box
-                                            bgcolor="primary.200"
+                                            // bgcolor="primary.200"
                                             border="0.5px solid"
                                             borderColor="primary.800"
                                             height="8vh"
+                                            onClick={() => boxClick(date, slot)}
+                                            width="100%"
+                                            bgcolor={
+                                                selections.find(
+                                                    (elem) =>
+                                                        elem.slot === slot &&
+                                                        matchDate(
+                                                            elem.date,
+                                                            date
+                                                        )
+                                                )
+                                                    ? "#0275d8"
+                                                    : "primary.200"
+                                            }
                                         ></Box>
                                     </Grid>
                                 ))}
                             </Grid>
                         ))}
-                        {/* {slots.map((slot) => (
-                            <Grid item width="3%" key={slot}>
-                                <Box
-                                    bgcolor="primary.200"
-                                    border="1px solid"
-                                    borderColor="primary.800"
-                                    height="5vh"
-                                >
-                                    {slot}
-                                </Box>
-                            </Grid>
-                        ))}
-                        {dates.map((date) => (
-                            <Grid item width="10%" key={date.getDate()}>
-                                <Box
-                                    bgcolor="primary.200"
-                                    border="1px solid"
-                                    borderColor="primary.800"
-                                    height="5vh"
-                                >
-                                    {date.getDate()}
-                                </Box>
-                                {slots.map((slot) => (
-                                    <Grid item width="100%" key={slot}>
-                                        <Box
-                                            bgcolor="primary.200"
-                                            border="1px solid"
-                                            borderColor="primary.800"
-                                            height="5vh"
-                                        >
-                                            {slot}
-                                        </Box>
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        ))} */}
                     </Grid>
                 </Box>
             </Box>
+
+            {/* ERR */}
+            <Snackbar
+                open={err}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+                <Alert
+                    variant="filled"
+                    onClose={handleClose}
+                    severity="error"
+                    sx={{ width: "100%" }}
+                >
+                    {errMsg}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

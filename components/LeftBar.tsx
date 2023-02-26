@@ -89,9 +89,7 @@ const LeftBar = ({ event }: { event: any }) => {
                         overflow="scroll"
                         className="no-scrollbar"
                     >
-                        <Typography whiteSpace="nowrap">{`${BASE_WEB_URL}/${
-                            event && event.code
-                        }`}</Typography>
+                        <Typography whiteSpace="nowrap">{`${BASE_WEB_URL}/${event.id}`}</Typography>
                     </Box>
                     <Box
                         bgcolor="primary.500"
