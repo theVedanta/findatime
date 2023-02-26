@@ -10,7 +10,8 @@
         "date-fns": "^2.29.3",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
-        "mongoose": "^6.8.4"
+        "firebase": "^9.17.1",
+        "ts-node": "^10.9.1"
     },
     "devDependencies": {
         "@types/cookie-parser": "^1.4.3",
@@ -24,6 +25,7 @@
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/index.js",
-        "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+        "dev": "ts-node-dev index",
+        "dev-con": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
     }
 }
