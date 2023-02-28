@@ -160,19 +160,21 @@ const Event = () => {
         setDates(dts);
 
         const getEvent = async () => {
-            const res = await axios.get(`${BASE_API_URL}/event/${eventID}`);
-
-            if (res.data.err) {
-                return (window.location.href = "/");
-            }
-
-            setEvent(res.data.event);
-            setSelections(
-                res.data.event && res.data.event.selections !== undefined
-                    ? res.data.event.selections
-                    : []
+            const sseClient = new EventSource(
+                `${BASE_API_URL}/event/${eventID}`
             );
-            setTimezone(res.data.event.timezone);
+            sseClient.onopen = () => console.log("Connection opened!");
+            sseClient.onmessage = (event) => {
+                const parsedEvent = JSON.parse(event.data).event;
+                setEvent(parsedEvent);
+                setSelections(
+                    parsedEvent && parsedEvent.selections !== undefined
+                        ? parsedEvent.selections
+                        : []
+                );
+                setTimezone(parsedEvent.timezone);
+            };
+            sseClient.onerror = () => console.log("Something went wrong!");
         };
 
         eventID && getEvent();
