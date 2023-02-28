@@ -3,7 +3,14 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { formatDistanceToNow } from "date-fns";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    onSnapshot,
+    updateDoc,
+} from "firebase/firestore";
 import db from "./db";
 
 if (process.env.NODE_ENV !== "production") {
@@ -30,20 +37,35 @@ app.post("/create", async (req: Request, res: Response) => {
         timezone: req.body.timezone,
         date: req.body.date,
         active: new Date(),
+        selections: [],
     });
 
     try {
         res.json({ done: true, code: meet.id });
-        console.log(meet);
     } catch (err) {
         res.json({ err });
     }
 });
 app.get("/event/:id", async (req, res) => {
+    res.setHeader("Content-Type", "text/event-stream");
     try {
-        let event = await getDoc(doc(db, "meetings", req.params.id));
-        console.log(event.data());
-        res.json({ event: { id: event.id, ...event.data() } });
+        onSnapshot(doc(db, "meetings", req.params.id), (meet) => {
+            meet.exists() &&
+                res.write(
+                    `data: ${JSON.stringify({
+                        event: { id: meet.id, ...meet.data() },
+                    })}\n\n`
+                );
+        });
+    } catch (err) {
+        res.write(`data: ${JSON.stringify({ err: "Not found" })}\n\n`);
+    }
+});
+
+app.put("/update/:id", async (req, res) => {
+    try {
+        await updateDoc(doc(db, "meetings", req.params.id), req.body);
+        res.json({ done: true });
     } catch (err) {
         res.json({ err });
     }
