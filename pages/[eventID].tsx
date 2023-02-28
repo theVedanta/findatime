@@ -76,57 +76,72 @@ const Event = () => {
     };
 
     const matchDate = (
-        date1Create: Date,
-        date2Create: Date,
+        date1Create: Date | string,
+        date2Create: Date | string,
         invert: boolean = false
     ) => {
-        const date1 = new Date(date1Create);
-        const date2 = new Date(date2Create);
+        const date1 = new Date(date1Create.toString());
+        const date2 = new Date(date2Create.toString());
 
         return invert
-            ? date1.getFullYear() !== date2.getFullYear() &&
-                  date1.getMonth() !== date2.getMonth() &&
-                  date1.getDate() !== date2.getDate()
+            ? !(
+                  date1.getFullYear() === date2.getFullYear() &&
+                  date1.getMonth() === date2.getMonth() &&
+                  date1.getDate() === date2.getDate()
+              )
             : date1.getFullYear() === date2.getFullYear() &&
                   date1.getMonth() === date2.getMonth() &&
                   date1.getDate() === date2.getDate();
     };
 
     const boxClick = async (date: Date, slot: string) => {
-        selections.find(
-            (elem) => elem.slot === slot && matchDate(elem.date, date)
-        )
-            ? setSelections(
-                  selections.filter(
-                      (elem) =>
-                          elem.slot !== slot && matchDate(elem.date, date, true)
-                  )
-              )
-            : setSelections([
-                  ...selections,
-                  {
-                      date,
-                      slot,
-                      // box: 1,
-                  },
-              ]);
+        // selections.find(
+        //     (elem) => elem.slot === slot && matchDate(elem.date, date)
+        // )
+        //     ? setSelections(
+        //           selections.filter(
+        //               (elem) => elem.slot === slot && matchDate(elem.date, date)
+        //           )
+        //       )
+        //     : setSelections([
+        //           ...selections,
+        //           {
+        //               date,
+        //               slot,
+        //               // box: 1,
+        //           },
+        //       ]);
+
+        let newSels = [...selections];
+        if (
+            selections.find(
+                (elem) => elem.slot === slot && matchDate(elem.date, date)
+            )
+        ) {
+            newSels = selections.filter(
+                (sel) => sel.slot !== slot || matchDate(sel.date, date, true)
+            );
+            setSelections(newSels);
+        } else {
+            newSels = [
+                ...selections,
+                {
+                    date,
+                    slot,
+                },
+            ];
+            setSelections(newSels);
+        }
 
         try {
             const updated: any = await axios.put(
                 `${BASE_API_URL}/update/${eventID}`,
                 {
-                    selections: [
-                        ...selections,
-                        {
-                            date,
-                            slot,
-                            // box: 1,
-                        },
-                    ],
+                    selections: newSels,
                 }
             );
-            // console.log(updated);
-            if (!updated.done) {
+
+            if (!updated.data.done) {
                 showErr("Some error occurred");
             }
         } catch (err) {
@@ -148,11 +163,15 @@ const Event = () => {
             const res = await axios.get(`${BASE_API_URL}/event/${eventID}`);
 
             if (res.data.err) {
-                showErr("Some error occurred");
+                return (window.location.href = "/");
             }
 
             setEvent(res.data.event);
-            setSelections(res.data.event && res.data.event.selections);
+            setSelections(
+                res.data.event && res.data.event.selections !== undefined
+                    ? res.data.event.selections
+                    : []
+            );
             setTimezone(res.data.event.timezone);
         };
 
@@ -315,6 +334,7 @@ const Event = () => {
                                             onClick={() => boxClick(date, slot)}
                                             width="100%"
                                             bgcolor={
+                                                selections !== undefined &&
                                                 selections.find(
                                                     (elem) =>
                                                         elem.slot === slot &&
