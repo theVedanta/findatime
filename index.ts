@@ -7,11 +7,28 @@ import {
     addDoc,
     collection,
     doc,
-    getDoc,
     onSnapshot,
     updateDoc,
 } from "firebase/firestore";
 import db from "./db";
+
+interface Selection {
+    date: Date;
+    slot: string;
+    box: number;
+    name: string;
+}
+interface Meeting {
+    owner: string;
+    name: string;
+    note?: string;
+    duration: string;
+    type: string;
+    timezone?: string;
+    date?: Date;
+    active: Date;
+    selections: Selection[];
+}
 
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
@@ -38,7 +55,7 @@ app.post("/create", async (req: Request, res: Response) => {
         date: req.body.date,
         active: new Date(),
         selections: [],
-    });
+    } as Meeting);
 
     try {
         res.json({ done: true, code: meet.id });

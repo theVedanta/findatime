@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBqm8OVB6Hrv9-t3AQ7lSSFXsLdc7_P5Ic",
+    apiKey: process.env.FIREBASE_API_KEY,
     authDomain: "findatime-5b83e.firebaseapp.com",
     projectId: "findatime-5b83e",
     storageBucket: "findatime-5b83e.appspot.com",
