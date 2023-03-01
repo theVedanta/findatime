@@ -3,6 +3,7 @@ import Nav from "../components/Nav";
 import LeftBar from "../components/LeftBar";
 import {
     Alert,
+    AvatarGroup,
     Box,
     Button,
     FormControl,
@@ -15,10 +16,11 @@ import {
     Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { yellow } from "@mui/material/colors";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { BASE_API_URL, days, months } from "../base";
 import axios from "axios";
+import UserIcon from "../components/UserIcon";
+import { red } from "@mui/material/colors";
 
 interface Meeting {
     owner?: string;
@@ -33,19 +35,22 @@ interface Meeting {
 interface Selection {
     date: Date;
     slot: string;
-    // box: number;
+    box: number;
+    name: string;
 }
 
 const Event = () => {
     const router = useRouter();
     const { eventID } = router.query;
-    const [timezone, setTimezone] = useState("India (GMT+5)");
+    const [timezone, setTimezone] = useState("");
     const [event, setEvent] = useState<Meeting>({});
     const [dates, setDates] = useState<Date[]>([]);
     const [selections, setSelections] = useState<Selection[]>([]);
     const [name, setName] = useState("New user");
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+    const [nameTaken, setNameTaken] = useState(false);
+    const [updateName, setUpdateName] = useState(false);
     const slots = [
         "1AM",
         "2AM",
@@ -94,43 +99,49 @@ const Event = () => {
                   date1.getDate() === date2.getDate();
     };
 
-    const boxClick = async (date: Date, slot: string) => {
-        // selections.find(
-        //     (elem) => elem.slot === slot && matchDate(elem.date, date)
-        // )
-        //     ? setSelections(
-        //           selections.filter(
-        //               (elem) => elem.slot === slot && matchDate(elem.date, date)
-        //           )
-        //       )
-        //     : setSelections([
-        //           ...selections,
-        //           {
-        //               date,
-        //               slot,
-        //               // box: 1,
-        //           },
-        //       ]);
+    const matchBox = (
+        date: Date | string,
+        slot: string,
+        box: number,
+        nameArg: boolean = false
+    ) => {
+        return selections && nameArg
+            ? selections.find(
+                  (elem) =>
+                      elem.slot === slot &&
+                      matchDate(elem.date, date) &&
+                      elem.box === box &&
+                      elem.name === name
+              )
+            : selections.find(
+                  (elem) =>
+                      elem.slot === slot &&
+                      matchDate(elem.date, date) &&
+                      elem.box === box
+              );
+    };
 
+    const boxClick = async (date: Date, slot: string, box: number) => {
         let newSels = [...selections];
-        if (
-            selections.find(
-                (elem) => elem.slot === slot && matchDate(elem.date, date)
-            )
-        ) {
+        console.log(matchBox(date, slot, box, true));
+        if (matchBox(date, slot, box, true)) {
             newSels = selections.filter(
-                (sel) => sel.slot !== slot || matchDate(sel.date, date, true)
+                (sel) =>
+                    sel.slot !== slot ||
+                    matchDate(sel.date, date, true) ||
+                    sel.box !== box ||
+                    sel.name !== name
             );
-            setSelections(newSels);
         } else {
             newSels = [
                 ...selections,
                 {
                     date,
                     slot,
+                    box,
+                    name,
                 },
             ];
-            setSelections(newSels);
         }
 
         try {
@@ -146,6 +157,38 @@ const Event = () => {
             }
         } catch (err) {
             showErr("Some error occurred");
+        }
+    };
+
+    const checkName: any = (currentName: string, initial: boolean = false) => {
+        if (currentName === "") setNameTaken(true);
+        else {
+            if (selections.find((sel) => sel.name === currentName)) {
+                if (initial) {
+                    const newName = `${currentName} ${
+                        selections.filter((sel) => sel.name === currentName)
+                            .length
+                    }`;
+                    console.log(
+                        newName,
+                        selections.find((sel) => sel.name === newName)
+                    );
+                    if (selections.find((sel) => sel.name === newName))
+                        return checkName(newName, true);
+
+                    setName(newName as string);
+                    (
+                        document.querySelector(
+                            "#name-input"
+                        ) as HTMLInputElement
+                    ).value = newName;
+                } else {
+                    setNameTaken(true);
+                }
+            } else {
+                setName(currentName);
+                setNameTaken(false);
+            }
         }
     };
 
@@ -173,6 +216,7 @@ const Event = () => {
                         : []
                 );
                 setTimezone(parsedEvent.timezone);
+                setUpdateName(!updateName);
             };
             sseClient.onerror = () => console.log("Something went wrong!");
         };
@@ -180,17 +224,23 @@ const Event = () => {
         eventID && getEvent();
     }, [eventID]);
 
+    useEffect(() => {
+        checkName(name, true);
+    }, [updateName]);
+
     return (
         <>
             <LeftBar event={event} />
             <Nav name={event && event.name} />
 
             <Box pl="26%" mt={5}>
-                <Box display="flex" width="80%">
+                <Box display="flex">
                     <TextField
                         sx={{ width: "40%", marginRight: 2 }}
-                        label="Your name*"
+                        label="Username*"
                         defaultValue={name}
+                        id="name-input"
+                        onChange={(e) => checkName(e.target.value.trim())}
                     />
                     <FormControl sx={{ width: "20%", marginRight: 2 }}>
                         <InputLabel required id="duration">
@@ -215,6 +265,11 @@ const Event = () => {
                         Sign in to save and edit meet
                     </Button>
                 </Box>
+                {nameTaken && (
+                    <Typography color={red[600]} fontSize={14}>
+                        <b>This name is taken</b>
+                    </Typography>
+                )}
 
                 <Typography fontWeight={500} fontSize={14} mt={3}>
                     Click/tap on the times and dates that suit you below
@@ -237,7 +292,7 @@ const Event = () => {
                             height={16}
                             border="1px solid"
                             borderColor="primary.900"
-                            bgcolor={yellow[500]}
+                            bgcolor="primary.300"
                         ></Box>
                         <Typography ml={1}>Group availability</Typography>
                     </Box>
@@ -277,6 +332,10 @@ const Event = () => {
                     height="66vh"
                     overflow="scroll"
                     position="relative"
+                    sx={{
+                        pointerEvents: nameTaken ? "none" : "all",
+                        opacity: nameTaken ? 0.3 : 1,
+                    }}
                 >
                     <Grid
                         container
@@ -333,22 +392,81 @@ const Event = () => {
                                             border="0.5px solid"
                                             borderColor="primary.800"
                                             height="8vh"
-                                            onClick={() => boxClick(date, slot)}
                                             width="100%"
-                                            bgcolor={
-                                                selections !== undefined &&
-                                                selections.find(
-                                                    (elem) =>
-                                                        elem.slot === slot &&
-                                                        matchDate(
-                                                            elem.date,
-                                                            date
-                                                        )
-                                                )
-                                                    ? "#0275d8"
-                                                    : "primary.200"
-                                            }
-                                        ></Box>
+                                            bgcolor="primary.200"
+                                        >
+                                            {(event &&
+                                            event.duration === "1 Hour"
+                                                ? [1]
+                                                : [1, 2]
+                                            ).map((i) => (
+                                                <Box
+                                                    sx={{ cursor: "pointer" }}
+                                                    key={i}
+                                                    p={1}
+                                                    bgcolor={
+                                                        matchBox(date, slot, i)
+                                                            ? "primary.500"
+                                                            : "primary.200"
+                                                    }
+                                                    alignItems="center"
+                                                    px={2}
+                                                    onClick={() =>
+                                                        boxClick(date, slot, i)
+                                                    }
+                                                    borderLeft={
+                                                        matchBox(
+                                                            date,
+                                                            slot,
+                                                            i
+                                                        ) &&
+                                                        "8px solid rgba(0, 0, 0, 0.2)"
+                                                    }
+                                                    width="100%"
+                                                    height={
+                                                        event &&
+                                                        event.duration ===
+                                                            "1 Hour"
+                                                            ? "100%"
+                                                            : "50%"
+                                                    }
+                                                >
+                                                    {matchBox(
+                                                        date,
+                                                        slot,
+                                                        i
+                                                    ) && (
+                                                        <AvatarGroup max={2}>
+                                                            {selections
+                                                                .filter(
+                                                                    (sel) =>
+                                                                        sel.slot ===
+                                                                            slot &&
+                                                                        matchDate(
+                                                                            sel.date,
+                                                                            date
+                                                                        ) &&
+                                                                        sel.box ===
+                                                                            i
+                                                                )
+                                                                .map((sel) => (
+                                                                    <UserIcon
+                                                                        key={
+                                                                            sel.name
+                                                                        }
+                                                                        letter={`${sel.name[0].toUpperCase()}${sel.name
+                                                                            .slice(
+                                                                                -1
+                                                                            )
+                                                                            .toUpperCase()}`}
+                                                                        size="sm"
+                                                                    />
+                                                                ))}
+                                                        </AvatarGroup>
+                                                    )}
+                                                </Box>
+                                            ))}
+                                        </Box>
                                     </Grid>
                                 ))}
                             </Grid>

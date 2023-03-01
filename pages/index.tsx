@@ -103,12 +103,8 @@ const Index = () => {
                             value={duration}
                             onChange={(e) => setDuration(e.target.value)}
                         >
-                            <MenuItem value={"30 Mintutes"}>
-                                30 Minutes
-                            </MenuItem>
-                            <MenuItem value={"1 Hour"}>1 Hour</MenuItem>
-                            <MenuItem value={"2 Hours"}>2 Hours</MenuItem>
-                            <MenuItem value={"3 Hours"}>3 Hours</MenuItem>
+                            <MenuItem value="30 Mintutes">30 Minutes</MenuItem>
+                            <MenuItem value="1 Hour">1 Hour</MenuItem>
                         </Select>
                     </FormControl>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

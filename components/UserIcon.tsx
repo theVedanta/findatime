@@ -15,9 +15,10 @@ import {
 interface Props {
     src?: string;
     letter?: string;
+    size?: string;
 }
 
-const UserIcon = ({ src, letter }: Props) => {
+const UserIcon = ({ src, letter, size }: Props) => {
     const colors: string[] = [
         orange[500],
         blue[500],
@@ -32,20 +33,19 @@ const UserIcon = ({ src, letter }: Props) => {
     ];
 
     return (
-        <Box width={36} height={36} borderRadius="50%" overflow="hidden">
-            <Avatar
-                sx={{
-                    width: 36,
-                    height: 36,
-                    background: !src
-                        ? colors[Math.trunc(Math.random() * 10)]
-                        : "transparent",
-                }}
-                src={src && src}
-            >
-                {!src && letter}
-            </Avatar>
-        </Box>
+        <Avatar
+            sx={{
+                width: size === "sm" ? 26 : 36,
+                height: size === "sm" ? 26 : 36,
+                fontSize: size === "sm" ? 14 : 20,
+                background: !src
+                    ? colors[Math.trunc(Math.random() * 10)]
+                    : "transparent",
+            }}
+            src={src && src}
+        >
+            {!src && letter}
+        </Avatar>
     );
 };
 
