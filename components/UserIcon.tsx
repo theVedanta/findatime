@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, Tooltip } from "@mui/material";
 import {
     blue,
     brown,
@@ -17,9 +17,10 @@ interface Props {
     src?: string;
     letter?: string;
     size?: string;
+    name?: string;
 }
 
-const UserIcon = ({ src, letter, size }: Props) => {
+const UserIcon = ({ src, letter, size, name }: Props) => {
     const colors: string[] = [
         orange[500],
         blue[500],
@@ -35,17 +36,19 @@ const UserIcon = ({ src, letter, size }: Props) => {
     const [color, setColor] = useState(colors[Math.trunc(Math.random() * 10)]);
 
     return (
-        <Avatar
-            sx={{
-                width: size === "sm" ? 26 : 36,
-                height: size === "sm" ? 26 : 36,
-                fontSize: size === "sm" ? 14 : 20,
-                background: !src ? color : "transparent",
-            }}
-            src={src && src}
-        >
-            {!src && letter}
-        </Avatar>
+        <Tooltip title={name}>
+            <Avatar
+                sx={{
+                    width: size === "sm" ? 26 : 36,
+                    height: size === "sm" ? 26 : 36,
+                    fontSize: size === "sm" ? 14 : 20,
+                    background: !src ? color : "transparent",
+                }}
+                src={src && src}
+            >
+                {!src && letter}
+            </Avatar>
+        </Tooltip>
     );
 };
 

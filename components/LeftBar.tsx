@@ -23,8 +23,21 @@ import {
 } from "@mui/icons-material";
 import { BASE_WEB_URL } from "../base";
 import UserIcon from "../components/UserIcon";
+import { useState, useEffect } from "react";
+import { Meeting } from "../types";
 
-const LeftBar = ({ event }: { event: any }) => {
+const LeftBar = ({ event }: { event: Meeting }) => {
+    const [grpMembers, setGrpMembers] = useState<string[]>([]);
+
+    useEffect(() => {
+        let users =
+            event &&
+            event.selections &&
+            event.selections.map((sel) => sel.name);
+        users = users && users.filter((user, i) => users?.indexOf(user) === i);
+        setGrpMembers(users as string[]);
+    }, [event]);
+
     return (
         <Box
             position="fixed"
@@ -157,11 +170,16 @@ const LeftBar = ({ event }: { event: any }) => {
                     Fri 15th Oct, 12 - 12:30 PM - <u>All Available</u>
                 </Typography>
 
-                <Box id="user-section" maxHeight={250} overflow="scroll">
+                <Box
+                    mt={4}
+                    pb={4}
+                    id="user-section"
+                    maxHeight={275}
+                    overflow="scroll"
+                >
                     <Typography
                         display="flex"
                         alignItems="center"
-                        mt={4}
                         mb={2}
                         fontSize={18}
                         fontWeight={500}
@@ -170,24 +188,28 @@ const LeftBar = ({ event }: { event: any }) => {
                         &nbsp;&nbsp; Group Members
                     </Typography>
 
-                    <Box display="flex" alignItems="center" mt={1}>
-                        <UserIcon letter="ID" />
-                        <Typography fontSize={18} ml={2}>
-                            Ishaan Das
-                        </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" mt={1}>
-                        <UserIcon letter="ID" />
-                        <Typography fontSize={18} ml={2}>
-                            Ishaan Das
-                        </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" mt={1}>
-                        <UserIcon src="/assets/sample.jpeg" />
-                        <Typography fontSize={18} ml={2}>
-                            Ishaan Das
-                        </Typography>
-                    </Box>
+                    {grpMembers &&
+                        grpMembers.map((mem) => (
+                            <Box
+                                key={mem}
+                                display="flex"
+                                alignItems="center"
+                                mt={1}
+                            >
+                                <UserIcon
+                                    letter={(
+                                        mem[0] + mem.slice(-1)
+                                    ).toUpperCase()}
+                                />
+                                <Typography
+                                    fontSize={17}
+                                    fontWeight={100}
+                                    ml={2}
+                                >
+                                    {mem}
+                                </Typography>
+                            </Box>
+                        ))}
                 </Box>
             </Box>
 

@@ -21,24 +21,7 @@ import { BASE_API_URL, days, months } from "../base";
 import axios from "axios";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
-// Look into dynamic name updating in realtime db
-
-interface Meeting {
-    owner?: string;
-    name?: string;
-    note?: string;
-    duration?: string;
-    type?: string;
-    timezone?: string;
-    date?: Date;
-    active?: Date;
-}
-interface Selection {
-    date: Date;
-    slot: string;
-    box: number;
-    name: string;
-}
+import { Meeting, Selection } from "../types";
 
 const Event = () => {
     const router = useRouter();
@@ -253,7 +236,10 @@ const Event = () => {
             <Box pl="26%" mt={5}>
                 <Box display="flex">
                     <TextField
-                        sx={{ width: "40%", marginRight: 2 }}
+                        sx={{
+                            width: "40%",
+                            marginRight: 2,
+                        }}
                         label="Username*"
                         defaultValue={name}
                         id="name-input"
@@ -286,7 +272,7 @@ const Event = () => {
                 </Box>
 
                 <Typography
-                    sx={{ opacity: nameTaken ? 1 : 0 }}
+                    sx={{ opacity: nameTaken ? 1 : 0, transition: "all 0.2s" }}
                     color={red[600]}
                     fontSize={14}
                 >
@@ -423,12 +409,22 @@ const Event = () => {
                                                 : [1, 2]
                                             ).map((i) => (
                                                 <Box
-                                                    sx={{ cursor: "pointer" }}
+                                                    sx={{
+                                                        cursor: "pointer",
+                                                        transition: "all 0.2s",
+                                                    }}
                                                     key={i}
-                                                    p={1}
+                                                    p={0.5}
                                                     bgcolor={
                                                         matchBox(date, slot, i)
-                                                            ? "primary.500"
+                                                            ? matchBox(
+                                                                  date,
+                                                                  slot,
+                                                                  i,
+                                                                  true
+                                                              )
+                                                                ? "primary.500"
+                                                                : "primary.300"
                                                             : "primary.200"
                                                     }
                                                     alignItems="center"
@@ -442,8 +438,9 @@ const Event = () => {
                                                             slot,
                                                             i
                                                         ) &&
-                                                        "8px solid rgba(0, 0, 0, 0.2)"
+                                                        "6px solid rgba(0, 0, 0, 0.25)"
                                                     }
+                                                    borderBottom="0.1px solid #fff"
                                                     width="100%"
                                                     height={
                                                         event &&
@@ -458,7 +455,17 @@ const Event = () => {
                                                         slot,
                                                         i
                                                     ) && (
-                                                        <AvatarGroup max={2}>
+                                                        <AvatarGroup
+                                                            sx={{
+                                                                "& .MuiAvatar-root":
+                                                                    {
+                                                                        width: 24,
+                                                                        height: 24,
+                                                                        fontSize: 14,
+                                                                    },
+                                                            }}
+                                                            max={3}
+                                                        >
                                                             {selections
                                                                 .filter(
                                                                     (sel) =>
@@ -476,11 +483,16 @@ const Event = () => {
                                                                         key={
                                                                             sel.name
                                                                         }
-                                                                        letter={`${sel.name[0].toUpperCase()}${sel.name
-                                                                            .slice(
+                                                                        letter={(
+                                                                            sel
+                                                                                .name[0] +
+                                                                            sel.name.slice(
                                                                                 -1
                                                                             )
-                                                                            .toUpperCase()}`}
+                                                                        ).toUpperCase()}
+                                                                        name={
+                                                                            sel.name
+                                                                        }
                                                                         size="sm"
                                                                     />
                                                                 ))}
