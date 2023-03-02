@@ -25,12 +25,13 @@ import { Meeting } from "../types";
 const Index = () => {
     const [duration, setDuration] = useState("1 Hour");
     const [timezone, setTimezone] = useState("India (GMT+5)");
-    const [type, setType] = useState("day");
+    const [type, setType] = useState("specific");
     const [date, setDate] = useState(new Date());
     const [name, setName] = useState("");
     const [note, setNote] = useState("");
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
@@ -50,9 +51,12 @@ const Index = () => {
     };
 
     const createEvent = async () => {
+        setLoading(true);
         try {
-            if (name === "")
+            if (name === "") {
+                setLoading(false);
                 return showErr("Please fill in all the required fields");
+            }
 
             const meet = await addDoc(collection(db, "meetings"), {
                 name,
@@ -67,6 +71,7 @@ const Index = () => {
 
             window.location.href = `/${meet.id}`;
         } catch (err) {
+            setLoading(false);
             showErr("Some error occurred");
         }
     };
@@ -190,7 +195,11 @@ const Index = () => {
                     </>
                 )}
 
-                <Button onClick={createEvent} sx={{ marginTop: 5 }}>
+                <Button
+                    onClick={createEvent}
+                    sx={{ marginTop: 5 }}
+                    disabled={loading}
+                >
                     Create Event
                 </Button>
             </Box>

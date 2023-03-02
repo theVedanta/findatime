@@ -17,19 +17,20 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { days, months } from "../base";
+import { days, months, slots } from "../base";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
 import { Meeting, Selection } from "../types";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import db from "../db";
+import Auth from "../components/Auth";
 
 const Event = () => {
     const router = useRouter();
     const { eventID } = router.query;
     const [timezone, setTimezone] = useState("");
     const [event, setEvent] = useState<Meeting>({});
-    const [dates, setDates] = useState<Date[]>([]);
+    const [dates, setDates] = useState<Date[]>([new Date()]);
     const [selections, setSelections] = useState<Selection[]>([]);
     const [name, setName] = useState(
         `New user ${Math.trunc(Math.random() * 10000).toString()}`
@@ -37,17 +38,7 @@ const Event = () => {
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [nameTaken, setNameTaken] = useState(false);
-    const slots = [
-        "1AM",
-        "2AM",
-        "3AM",
-        "4AM",
-        "5AM",
-        "6AM",
-        "7AM",
-        "8AM",
-        "9AM",
-    ];
+    const [authOpen, setAuthOpen] = useState(false);
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
@@ -184,8 +175,25 @@ const Event = () => {
         updateSelections(newSels);
     };
 
-    useEffect(() => {
+    const changeDates = (forward: boolean) => {
         const dts = [];
+        for (let i = 0; i <= 7; i++) {
+            const newDate = forward
+                ? new Date(dates[dates.length - 1])
+                : new Date(dates[0]);
+            forward
+                ? newDate.setDate(dates[dates.length - 1].getDate() + i)
+                : newDate.setDate(dates[0].getDate() - i);
+
+            dts.push(newDate);
+        }
+
+        !forward && dts.reverse();
+        setDates(dts);
+    };
+
+    useEffect(() => {
+        const dts = [new Date()];
         const newDate = new Date();
         for (let i = 0; i < 7; i++) {
             newDate.setDate(newDate.getDate() + 1);
@@ -199,12 +207,8 @@ const Event = () => {
                 onSnapshot(doc(db, "meetings", eventID as string), (meet) => {
                     if (meet.exists()) {
                         const meetData = meet.data();
-                        const sels: Selection[] =
-                            meetData.selections !== undefined
-                                ? meetData.selections
-                                : [];
 
-                        setEvent(meetData);
+                        setEvent({ id: eventID as string, ...meetData });
                         setSelections(
                             meetData.selections !== undefined
                                 ? meetData.selections
@@ -232,6 +236,14 @@ const Event = () => {
         <>
             <LeftBar event={event} />
             <Nav name={event && event.name} />
+
+            {authOpen && (
+                <Auth
+                    name={name}
+                    authOpen={authOpen}
+                    setAuthOpen={setAuthOpen}
+                />
+            )}
 
             <Box pl="26%" mt={5}>
                 <Box display="flex">
@@ -266,7 +278,12 @@ const Event = () => {
                         </Select>
                     </FormControl>
 
-                    <Button sx={{ width: "30%" }} size="small">
+                    <Button
+                        sx={{ width: "30%" }}
+                        size="small"
+                        onClick={() => setAuthOpen(true)}
+                        disabled={nameTaken}
+                    >
                         Sign in to save and edit meet
                     </Button>
                 </Box>
@@ -319,14 +336,22 @@ const Event = () => {
 
                 <Box display="flex" alignItems="center" mt={6}>
                     <Typography fontSize={20} mr={3}>
-                        October 1 - October 7
+                        {months[dates[0].getMonth()]}&nbsp;{dates[0].getDate()}{" "}
+                        - {months[dates[dates.length - 1].getMonth()]}&nbsp;
+                        {dates[dates.length - 1].getDate()}
                     </Typography>
                     {event && event.type !== "week" && (
                         <>
-                            <Button variant="text">
+                            <Button
+                                variant="text"
+                                onClick={() => changeDates(false)}
+                            >
                                 <ChevronLeft />
                             </Button>
-                            <Button variant="text">
+                            <Button
+                                variant="text"
+                                onClick={() => changeDates(true)}
+                            >
                                 <ChevronRight />
                             </Button>
                         </>

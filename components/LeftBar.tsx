@@ -12,6 +12,7 @@ import {
 } from "react-share";
 import {
     Check,
+    CheckRounded,
     EmailOutlined,
     FacebookOutlined,
     LinkedIn,
@@ -28,6 +29,7 @@ import { Meeting } from "../types";
 
 const LeftBar = ({ event }: { event: Meeting }) => {
     const [grpMembers, setGrpMembers] = useState<string[]>([]);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         let users =
@@ -102,18 +104,35 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                         overflow="scroll"
                         className="no-scrollbar"
                     >
-                        <Typography whiteSpace="nowrap">{`${BASE_WEB_URL}/${event.id}`}</Typography>
+                        <Typography whiteSpace="nowrap">
+                            {copied
+                                ? "Copied text!"
+                                : `${BASE_WEB_URL}/${event && event.id}`}
+                        </Typography>
                     </Box>
                     <Box
                         bgcolor="primary.500"
                         color="white"
                         display="flex"
                         alignItems="center"
-                        p={1}
+                        py={1}
+                        px={2}
                         borderRadius="0 5px 5px 0"
                         sx={{ cursor: "pointer" }}
+                        onClick={() => {
+                            setCopied(true);
+                            navigator.clipboard.writeText(
+                                `${BASE_WEB_URL}/${event && event.id}`
+                            );
+
+                            setTimeout(() => setCopied(false), 3000);
+                        }}
                     >
-                        <ContentCopyOutlinedIcon />
+                        {copied ? (
+                            <CheckRounded />
+                        ) : (
+                            <ContentCopyOutlinedIcon />
+                        )}
                     </Box>
                 </Box>
 
@@ -123,7 +142,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     justifyContent="space-between"
                     pr={12}
                     mt={2}
-                    sx={{ opacity: 0.6 }}
+                    sx={{ opacity: 0.4 }}
                 >
                     <EmailShareButton url={`${BASE_WEB_URL}/event`}>
                         <EmailOutlined />
