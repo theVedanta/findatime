@@ -21,6 +21,7 @@ import { BASE_API_URL, days, months } from "../base";
 import axios from "axios";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
+// Look into dynamic name updating in realtime db
 
 interface Meeting {
     owner?: string;
@@ -46,11 +47,12 @@ const Event = () => {
     const [event, setEvent] = useState<Meeting>({});
     const [dates, setDates] = useState<Date[]>([]);
     const [selections, setSelections] = useState<Selection[]>([]);
-    const [name, setName] = useState("New user");
+    const [name, setName] = useState(
+        `New user ${Math.trunc(Math.random() * 10000).toString()}`
+    );
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [nameTaken, setNameTaken] = useState(false);
-    const [updateName, setUpdateName] = useState(false);
     const slots = [
         "1AM",
         "2AM",
@@ -121,9 +123,36 @@ const Event = () => {
               );
     };
 
+    const checkName: any = (currentName: string, initial: boolean = false) => {
+        if (currentName === "") setNameTaken(true);
+        else {
+            if (selections.find((sel) => sel.name === currentName)) {
+                if (initial) {
+                    const newName =
+                        currentName +
+                        " " +
+                        Math.trunc(Math.random() * 10000).toString();
+                    if (selections.find((sel) => sel.name === newName))
+                        return checkName(newName, true);
+
+                    setName(newName as string);
+                    (
+                        document.querySelector(
+                            "#name-input"
+                        ) as HTMLInputElement
+                    ).value = newName;
+                } else {
+                    setNameTaken(true);
+                }
+            } else {
+                setName(currentName);
+                setNameTaken(false);
+            }
+        }
+    };
+
     const boxClick = async (date: Date, slot: string, box: number) => {
         let newSels = [...selections];
-        console.log(matchBox(date, slot, box, true));
         if (matchBox(date, slot, box, true)) {
             newSels = selections.filter(
                 (sel) =>
@@ -160,38 +189,6 @@ const Event = () => {
         }
     };
 
-    const checkName: any = (currentName: string, initial: boolean = false) => {
-        if (currentName === "") setNameTaken(true);
-        else {
-            if (selections.find((sel) => sel.name === currentName)) {
-                if (initial) {
-                    const newName = `${currentName} ${
-                        selections.filter((sel) => sel.name === currentName)
-                            .length
-                    }`;
-                    console.log(
-                        newName,
-                        selections.find((sel) => sel.name === newName)
-                    );
-                    if (selections.find((sel) => sel.name === newName))
-                        return checkName(newName, true);
-
-                    setName(newName as string);
-                    (
-                        document.querySelector(
-                            "#name-input"
-                        ) as HTMLInputElement
-                    ).value = newName;
-                } else {
-                    setNameTaken(true);
-                }
-            } else {
-                setName(currentName);
-                setNameTaken(false);
-            }
-        }
-    };
-
     useEffect(() => {
         const dts = [];
         const newDate = new Date();
@@ -216,7 +213,6 @@ const Event = () => {
                         : []
                 );
                 setTimezone(parsedEvent.timezone);
-                setUpdateName(!updateName);
             };
             sseClient.onerror = () => console.log("Something went wrong!");
         };
@@ -224,9 +220,7 @@ const Event = () => {
         eventID && getEvent();
     }, [eventID]);
 
-    useEffect(() => {
-        checkName(name, true);
-    }, [updateName]);
+    useEffect(() => checkName(name, true), [timezone]);
 
     return (
         <>
@@ -411,9 +405,9 @@ const Event = () => {
                                                     }
                                                     alignItems="center"
                                                     px={2}
-                                                    onClick={() =>
-                                                        boxClick(date, slot, i)
-                                                    }
+                                                    onClick={() => {
+                                                        boxClick(date, slot, i);
+                                                    }}
                                                     borderLeft={
                                                         matchBox(
                                                             date,
