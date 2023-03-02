@@ -123,31 +123,65 @@ const Event = () => {
               );
     };
 
-    const checkName: any = (currentName: string, initial: boolean = false) => {
-        if (currentName === "") setNameTaken(true);
-        else {
-            if (selections.find((sel) => sel.name === currentName)) {
-                if (initial) {
-                    const newName =
-                        currentName +
-                        " " +
-                        Math.trunc(Math.random() * 10000).toString();
-                    if (selections.find((sel) => sel.name === newName))
-                        return checkName(newName, true);
-
-                    setName(newName as string);
-                    (
-                        document.querySelector(
-                            "#name-input"
-                        ) as HTMLInputElement
-                    ).value = newName;
-                } else {
-                    setNameTaken(true);
+    const updateSelections = async (sels: Selection[]) => {
+        try {
+            const updated: any = await axios.put(
+                `${BASE_API_URL}/update/${eventID}`,
+                {
+                    selections: sels,
                 }
-            } else {
-                setName(currentName);
-                setNameTaken(false);
+            );
+
+            if (!updated.data.done) {
+                console.log("fake err", updated.data);
+                showErr("Some error occurred");
             }
+        } catch (err) {
+            console.log("real err", err);
+            showErr("Some error occurred");
+        }
+    };
+
+    const randomName = (nm: string) => {
+        return nm + ` ${Math.trunc(Math.random() * 10000)}`;
+    };
+
+    const updateName = (fromName: string, toName: string) => {
+        const selsCopy = [...selections];
+        selsCopy.forEach((sel, i) => {
+            if (sel.name === fromName) {
+                sel["name"] = toName;
+            }
+        });
+
+        setSelections(selsCopy);
+        updateSelections(selsCopy);
+    };
+
+    const checkName: any = (nm: string = name, change: boolean = false) => {
+        if (nm === "") {
+            return setNameTaken(true);
+        }
+        if (name === nm) {
+            return setNameTaken(false);
+        }
+        if (selections.find((sel) => sel.name === nm)) {
+            if (change) {
+                const newName = randomName(nm);
+                (
+                    document.querySelector("#name-input") as HTMLInputElement
+                ).value = newName;
+
+                selections.find((sel) => sel.name === nm)
+                    ? checkName(newName, true)
+                    : setName(newName);
+            } else {
+                setNameTaken(true);
+            }
+        } else {
+            updateName(name, nm);
+            setName(nm);
+            setNameTaken(false);
         }
     };
 
@@ -173,20 +207,7 @@ const Event = () => {
             ];
         }
 
-        try {
-            const updated: any = await axios.put(
-                `${BASE_API_URL}/update/${eventID}`,
-                {
-                    selections: newSels,
-                }
-            );
-
-            if (!updated.data.done) {
-                showErr("Some error occurred");
-            }
-        } catch (err) {
-            showErr("Some error occurred");
-        }
+        updateSelections(newSels);
     };
 
     useEffect(() => {
@@ -220,7 +241,9 @@ const Event = () => {
         eventID && getEvent();
     }, [eventID]);
 
-    useEffect(() => checkName(name, true), [timezone]);
+    useEffect(() => {
+        eventID && checkName(name, true);
+    }, [eventID]);
 
     return (
         <>
@@ -234,7 +257,9 @@ const Event = () => {
                         label="Username*"
                         defaultValue={name}
                         id="name-input"
-                        onChange={(e) => checkName(e.target.value.trim())}
+                        onChange={(e) => {
+                            checkName(e.target.value.trim());
+                        }}
                     />
                     <FormControl sx={{ width: "20%", marginRight: 2 }}>
                         <InputLabel required id="duration">
@@ -259,11 +284,14 @@ const Event = () => {
                         Sign in to save and edit meet
                     </Button>
                 </Box>
-                {nameTaken && (
-                    <Typography color={red[600]} fontSize={14}>
-                        <b>This name is taken</b>
-                    </Typography>
-                )}
+
+                <Typography
+                    sx={{ opacity: nameTaken ? 1 : 0 }}
+                    color={red[600]}
+                    fontSize={14}
+                >
+                    <b>This name is taken/is invalid</b>
+                </Typography>
 
                 <Typography fontWeight={500} fontSize={14} mt={3}>
                     Click/tap on the times and dates that suit you below

@@ -11,6 +11,7 @@ import {
     teal,
     yellow,
 } from "@mui/material/colors";
+import { useState } from "react";
 
 interface Props {
     src?: string;
@@ -31,6 +32,7 @@ const UserIcon = ({ src, letter, size }: Props) => {
         teal[500],
         brown[500],
     ];
+    const [color, setColor] = useState(colors[Math.trunc(Math.random() * 10)]);
 
     return (
         <Avatar
@@ -38,9 +40,7 @@ const UserIcon = ({ src, letter, size }: Props) => {
                 width: size === "sm" ? 26 : 36,
                 height: size === "sm" ? 26 : 36,
                 fontSize: size === "sm" ? 14 : 20,
-                background: !src
-                    ? colors[Math.trunc(Math.random() * 10)]
-                    : "transparent",
+                background: !src ? color : "transparent",
             }}
             src={src && src}
         >
