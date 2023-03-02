@@ -17,11 +17,12 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { BASE_API_URL, days, months } from "../base";
-import axios from "axios";
+import { days, months } from "../base";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
 import { Meeting, Selection } from "../types";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import db from "../db";
 
 const Event = () => {
     const router = useRouter();
@@ -108,20 +109,11 @@ const Event = () => {
 
     const updateSelections = async (sels: Selection[]) => {
         try {
-            const updated: any = await axios.put(
-                `${BASE_API_URL}/update/${eventID}`,
-                {
-                    selections: sels,
-                }
-            );
-
-            if (!updated.data.done) {
-                console.log("fake err", updated.data);
-                showErr("Some error occurred");
-            }
+            await updateDoc(doc(db, "meetings", eventID as string), {
+                selections: sels,
+            });
         } catch (err) {
-            console.log("real err", err);
-            showErr("Some error occurred");
+            showErr("Some error occurred with app");
         }
     };
 
@@ -182,14 +174,13 @@ const Event = () => {
             newSels = [
                 ...selections,
                 {
-                    date,
+                    date: date.toString(),
                     slot,
                     box,
                     name,
                 },
             ];
         }
-
         updateSelections(newSels);
     };
 
@@ -204,21 +195,30 @@ const Event = () => {
         setDates(dts);
 
         const getEvent = async () => {
-            const sseClient = new EventSource(
-                `${BASE_API_URL}/event/${eventID}`
-            );
-            sseClient.onopen = () => console.log("Connection opened!");
-            sseClient.onmessage = (event) => {
-                const parsedEvent = JSON.parse(event.data).event;
-                setEvent(parsedEvent);
-                setSelections(
-                    parsedEvent && parsedEvent.selections !== undefined
-                        ? parsedEvent.selections
-                        : []
-                );
-                setTimezone(parsedEvent.timezone);
-            };
-            sseClient.onerror = () => console.log("Something went wrong!");
+            try {
+                onSnapshot(doc(db, "meetings", eventID as string), (meet) => {
+                    if (meet.exists()) {
+                        const meetData = meet.data();
+                        const sels: Selection[] =
+                            meetData.selections !== undefined
+                                ? meetData.selections
+                                : [];
+
+                        setEvent(meetData);
+                        setSelections(
+                            meetData.selections !== undefined
+                                ? meetData.selections
+                                : []
+                        );
+
+                        setTimezone(meetData.timezone);
+                    } else {
+                        showErr("Meet not found");
+                    }
+                });
+            } catch (err) {
+                showErr("Some error occurred");
+            }
         };
 
         eventID && getEvent();

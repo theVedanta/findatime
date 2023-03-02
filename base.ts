@@ -1,9 +1,7 @@
 const BASE_WEB_URL: string =
-    process.env.NEXT_PUBLIC_NODE_ENV === "dev" ? "http://localhost:3000" : "https://findatime.netlify.app";
-const BASE_API_URL: string =
     process.env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:4000"
-        : "https://findatime-api.onrender.com";
+        ? "http://localhost:3000"
+        : "https://findatime.netlify.app";
 
 const months: string[] = [
     "January",
@@ -29,4 +27,4 @@ const days: string[] = [
     "Saturday",
 ];
 
-export { BASE_WEB_URL, BASE_API_URL, months, days };
+export { BASE_WEB_URL, months, days };

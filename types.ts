@@ -1,5 +1,5 @@
 interface Selection {
-    date: Date;
+    date: string;
     slot: string;
     box: number;
     name: string;
@@ -12,8 +12,8 @@ interface Meeting {
     duration?: string;
     type?: string;
     timezone?: string;
-    date?: Date;
-    active?: Date;
+    date?: string;
+    active?: string;
     selections?: Selection[];
 }
 export type { Meeting, Selection };

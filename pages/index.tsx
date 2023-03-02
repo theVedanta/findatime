@@ -18,8 +18,9 @@ import React, { useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import BottomNav from "../components/BottomNav";
-import axios from "axios";
-import { BASE_API_URL } from "../base";
+import db from "../db";
+import { addDoc, collection } from "firebase/firestore";
+import { Meeting } from "../types";
 
 const Index = () => {
     const [duration, setDuration] = useState("1 Hour");
@@ -49,23 +50,25 @@ const Index = () => {
     };
 
     const createEvent = async () => {
-        if (name === "")
-            return showErr("Please fill in all the required fields");
+        try {
+            if (name === "")
+                return showErr("Please fill in all the required fields");
 
-        const res = await axios.post(`${BASE_API_URL}/create`, {
-            name,
-            type,
-            note,
-            date,
-            timezone,
-            duration,
-        });
+            const meet = await addDoc(collection(db, "meetings"), {
+                name,
+                duration,
+                note,
+                type,
+                timezone,
+                date: date.toString(),
+                active: new Date().toString(),
+                selections: [],
+            } as Meeting);
 
-        if (!res.data.done) {
-            return showErr("Some error occurred");
+            window.location.href = `/${meet.id}`;
+        } catch (err) {
+            showErr("Some error occurred");
         }
-
-        window.location.href = `/${res.data.code}`;
     };
 
     return (
