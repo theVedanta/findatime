@@ -1,3 +1,16 @@
+import {
+    blue,
+    brown,
+    green,
+    lime,
+    orange,
+    pink,
+    purple,
+    red,
+    teal,
+    yellow,
+} from "@mui/material/colors";
+
 const BASE_WEB_URL: string =
     process.env.NEXT_PUBLIC_NODE_ENV === "dev"
         ? "http://localhost:3000"
@@ -54,4 +67,17 @@ let slots: string[] = [
     "5AM",
 ];
 
-export { BASE_WEB_URL, months, days, slots };
+const colors: string[] = [
+    orange[500],
+    blue[500],
+    red[500],
+    purple[500],
+    yellow[800],
+    green[500],
+    pink[500],
+    lime[700],
+    teal[500],
+    brown[500],
+];
+
+export { BASE_WEB_URL, months, days, slots, colors };

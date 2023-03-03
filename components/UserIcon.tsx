@@ -1,16 +1,4 @@
-import { Avatar, Box, Tooltip } from "@mui/material";
-import {
-    blue,
-    brown,
-    green,
-    lime,
-    orange,
-    pink,
-    purple,
-    red,
-    teal,
-    yellow,
-} from "@mui/material/colors";
+import { Avatar, Tooltip } from "@mui/material";
 import { useState } from "react";
 
 interface Props {
@@ -18,23 +6,10 @@ interface Props {
     letter?: string;
     size?: string;
     name?: string;
+    color?: string;
 }
 
-const UserIcon = ({ src, letter, size, name }: Props) => {
-    const colors: string[] = [
-        orange[500],
-        blue[500],
-        red[500],
-        purple[500],
-        yellow[800],
-        green[500],
-        pink[500],
-        lime[700],
-        teal[500],
-        brown[500],
-    ];
-    const [color, setColor] = useState(colors[Math.trunc(Math.random() * 10)]);
-
+const UserIcon = ({ src, letter, size, name, color }: Props) => {
     return (
         <Tooltip title={name}>
             <Avatar

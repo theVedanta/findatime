@@ -3,6 +3,7 @@ interface Selection {
     slot: string;
     box: number;
     name: string;
+    color: string;
 }
 interface Meeting {
     id?: string;

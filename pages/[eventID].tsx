@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { days, months, slots } from "../base";
+import { colors, days, months, slots } from "../base";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
 import { Meeting, Selection } from "../types";
@@ -39,6 +39,7 @@ const Event = () => {
     const [errMsg, setErrMsg] = useState("");
     const [nameTaken, setNameTaken] = useState(false);
     const [authOpen, setAuthOpen] = useState(false);
+    const [color, setColor] = useState(colors[Math.trunc(Math.random() * 10)]);
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
@@ -169,6 +170,7 @@ const Event = () => {
                     slot,
                     box,
                     name,
+                    color,
                 },
             ];
         }
@@ -242,6 +244,7 @@ const Event = () => {
                     name={name}
                     authOpen={authOpen}
                     setAuthOpen={setAuthOpen}
+                    color={color}
                 />
             )}
 
@@ -519,6 +522,9 @@ const Event = () => {
                                                                             sel.name
                                                                         }
                                                                         size="sm"
+                                                                        color={
+                                                                            sel.color
+                                                                        }
                                                                     />
                                                                 ))}
                                                         </AvatarGroup>

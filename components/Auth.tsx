@@ -6,7 +6,7 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { compare, hash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
-const Auth = ({ setAuthOpen, name }: any) => {
+const Auth = ({ setAuthOpen, name, color }: any) => {
     const [register, setRegister] = useState(true);
     const [nameTaken, setNameTaken] = useState(false);
     const [passMatch, setPassMatch] = useState(true);
@@ -28,18 +28,19 @@ const Auth = ({ setAuthOpen, name }: any) => {
         }
     };
 
-    const signUpUser = async () => {
+    const signUpUser = async (clr: string) => {
         if (nameTaken || !passMatch) return;
         if (password === "") return;
         const userDoc = await addDoc(collection(db, "users"), {
             username,
             password: await hash(password, 10),
+            color: clr,
         });
 
         const access_token = sign(
             { id: userDoc.id.toString() },
             process.env.NEXT_PUBLIC_TOKEN_SECRET as string,
-            { expiresIn: "24h" }
+            { expiresIn: "30d" }
         );
         localStorage.setItem("auth-token", access_token);
         setAuthOpen(false);
@@ -56,7 +57,7 @@ const Auth = ({ setAuthOpen, name }: any) => {
             const access_token = sign(
                 { id: userArr.docs[0].id.toString() },
                 process.env.NEXT_PUBLIC_TOKEN_SECRET as string,
-                { expiresIn: "24h" }
+                { expiresIn: "30d" }
             );
             localStorage.setItem("auth-token", access_token);
             setAuthOpen(false);
@@ -162,7 +163,7 @@ const Auth = ({ setAuthOpen, name }: any) => {
                 <Button
                     disabled={register ? nameTaken || !passMatch : !nameTaken}
                     sx={{ marginTop: 5 }}
-                    onClick={register ? signUpUser : loginUser}
+                    onClick={register ? () => signUpUser(color) : loginUser}
                 >
                     {register ? "Register" : "Sign in"}
                 </Button>

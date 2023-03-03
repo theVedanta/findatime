@@ -27,17 +27,30 @@ import UserIcon from "../components/UserIcon";
 import { useState, useEffect } from "react";
 import { Meeting } from "../types";
 
+interface User {
+    name: string;
+    color: string;
+}
+
 const LeftBar = ({ event }: { event: Meeting }) => {
-    const [grpMembers, setGrpMembers] = useState<string[]>([]);
+    const [grpMembers, setGrpMembers] = useState<User[]>([]);
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         let users =
             event &&
             event.selections &&
-            event.selections.map((sel) => sel.name);
-        users = users && users.filter((user, i) => users?.indexOf(user) === i);
-        setGrpMembers(users as string[]);
+            event.selections.map((sel) => ({
+                name: sel.name,
+                color: sel.color,
+            }));
+
+        users =
+            users &&
+            users.filter(
+                (v, i, a) => a.findIndex((v2) => v2.name === v.name) === i
+            );
+        setGrpMembers(users as User[]);
     }, [event]);
 
     return (
@@ -210,22 +223,23 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     {grpMembers &&
                         grpMembers.map((mem) => (
                             <Box
-                                key={mem}
+                                key={mem.name}
                                 display="flex"
                                 alignItems="center"
                                 mt={1}
                             >
                                 <UserIcon
                                     letter={(
-                                        mem[0] + mem.slice(-1)
+                                        mem.name[0] + mem.name.slice(-1)
                                     ).toUpperCase()}
+                                    color={mem.color}
                                 />
                                 <Typography
                                     fontSize={17}
                                     fontWeight={100}
                                     ml={2}
                                 >
-                                    {mem}
+                                    {mem.name}
                                 </Typography>
                             </Box>
                         ))}
