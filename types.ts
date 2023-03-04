@@ -17,4 +17,11 @@ interface Meeting {
     active?: string;
     selections?: Selection[];
 }
-export type { Meeting, Selection };
+interface User {
+    id?: string;
+    username?: string;
+    color?: string;
+    pfp?: string;
+}
+
+export type { Meeting, Selection, User };

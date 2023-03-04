@@ -8,38 +8,53 @@ import {
     Button,
     FormControl,
     Grid,
+    IconButton,
+    InputAdornment,
     InputLabel,
     MenuItem,
+    OutlinedInput,
     Select,
     Snackbar,
     TextField,
     Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { FC, useEffect, useState } from "react";
+import {
+    CheckRounded,
+    ChevronLeft,
+    ChevronRight,
+    EnergySavingsLeafTwoTone,
+} from "@mui/icons-material";
 import { colors, days, months, slots } from "../base";
 import UserIcon from "../components/UserIcon";
 import { red } from "@mui/material/colors";
 import { Meeting, Selection } from "../types";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    getDocs,
+    onSnapshot,
+    query,
+    updateDoc,
+    where,
+} from "firebase/firestore";
 import db from "../db";
 import Auth from "../components/Auth";
 
-const Event = () => {
+const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
     const router = useRouter();
     const { eventID } = router.query;
     const [timezone, setTimezone] = useState("");
     const [event, setEvent] = useState<Meeting>({});
-    const [dates, setDates] = useState<Date[]>([new Date()]);
+    const [dates, setDates] = useState<Date[]>([]);
     const [selections, setSelections] = useState<Selection[]>([]);
-    const [name, setName] = useState(
-        `New user ${Math.trunc(Math.random() * 10000).toString()}`
-    );
+    const [name, setName] = useState(" ");
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [nameTaken, setNameTaken] = useState(false);
     const [authOpen, setAuthOpen] = useState(false);
-    const [color, setColor] = useState(colors[Math.trunc(Math.random() * 10)]);
+    const [color, setColor] = useState("");
+    const [changedName, setChangedName] = useState(false);
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
@@ -99,8 +114,21 @@ const Event = () => {
               );
     };
 
+    const checkUniqueness = async (nm: string) => {
+        const docsWithName = await getDocs(
+            query(collection(db, "users"), where("username", "==", nm))
+        );
+
+        if (docsWithName.size > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
     const updateSelections = async (sels: Selection[]) => {
         try {
+            if (!event.timezone) return;
             await updateDoc(doc(db, "meetings", eventID as string), {
                 selections: sels,
             });
@@ -113,7 +141,7 @@ const Event = () => {
         return nm + ` ${Math.trunc(Math.random() * 10000)}`;
     };
 
-    const updateName = (fromName: string, toName: string) => {
+    const updateNameInSelections = (fromName: string, toName: string) => {
         const selsCopy = [...selections];
         selsCopy.forEach((sel, i) => {
             if (sel.name === fromName) {
@@ -125,30 +153,56 @@ const Event = () => {
         updateSelections(selsCopy);
     };
 
-    const checkName: any = (nm: string = name, change: boolean = false) => {
+    const isNameTaken = async (nm: string) => {
+        if (
+            selections.find((sel) => sel.name === nm) ||
+            !(await checkUniqueness(nm))
+        ) {
+            setNameTaken(true);
+            return true;
+        } else {
+            setNameTaken(false);
+            return false;
+        }
+    };
+
+    const checkName: any = async (
+        nm: string = name,
+        change: boolean = false
+    ) => {
+        setChangedName(false);
+        // nm is newly entered name
         if (nm === "") {
             return setNameTaken(true);
         }
-        if (name === nm) {
+        if (name === nm && !change) {
             return setNameTaken(false);
         }
-        if (selections.find((sel) => sel.name === nm)) {
+        if (await isNameTaken(nm)) {
             if (change) {
                 const newName = randomName(nm);
                 (
                     document.querySelector("#name-input") as HTMLInputElement
                 ).value = newName;
 
-                selections.find((sel) => sel.name === nm)
-                    ? checkName(newName, true)
-                    : setName(newName);
-            } else {
-                setNameTaken(true);
+                if (
+                    selections.find((sel) => sel.name === nm) ||
+                    !(await checkUniqueness(nm))
+                ) {
+                    checkName(newName, true);
+                } else {
+                    setName(newName);
+                    sessionStorage.setItem("name", newName);
+                }
             }
         } else {
-            updateName(name, nm);
+            updateNameInSelections(name, nm);
+            typeof window !== "undefined" && sessionStorage.setItem("name", nm);
             setName(nm);
-            setNameTaken(false);
+            if (change)
+                (
+                    document.querySelector("#name-input") as HTMLInputElement
+                ).value = nm;
         }
     };
 
@@ -219,6 +273,7 @@ const Event = () => {
 
                         setTimezone(meetData.timezone);
                     } else {
+                        window.location.href = "/";
                         showErr("Meet not found");
                     }
                 });
@@ -231,39 +286,98 @@ const Event = () => {
     }, [eventID]);
 
     useEffect(() => {
-        eventID && checkName(name, true);
-    }, [eventID]);
+        if (authed !== "check") {
+            if (user && user.username) {
+                updateNameInSelections(name, user.username);
+                setNameTaken(false);
+                setName(user.username);
+                (
+                    document.querySelector("#name-input") as HTMLInputElement
+                ).value = user.username;
+
+                setColor(user.color);
+            } else if (sessionStorage.getItem("name")) {
+                checkName(sessionStorage.getItem("name") as string, true);
+                setColor(sessionStorage.getItem("color") as string);
+            } else {
+                checkName(
+                    `New user ${Math.trunc(Math.random() * 10000).toString()}`,
+                    true
+                );
+                setColor(colors[Math.trunc(Math.random() * 10)]);
+                sessionStorage.setItem(
+                    "color",
+                    colors[Math.trunc(Math.random() * 10)]
+                );
+            }
+        }
+    }, [user, authed]);
 
     return (
         <>
             <LeftBar event={event} />
             <Nav name={event && event.name} />
 
-            {authOpen && (
+            {authOpen && !authed && (
                 <Auth
+                    authed={authed}
+                    setAuthed={setAuthed}
+                    user={user}
+                    setUser={setUser}
                     name={name}
                     authOpen={authOpen}
                     setAuthOpen={setAuthOpen}
                     color={color}
+                    checkUniqueness={checkUniqueness}
                 />
             )}
 
-            <Box pl="26%" mt={5}>
+            <Box pl="26%" mt={12}>
                 <Box display="flex">
-                    <TextField
+                    <FormControl
+                        variant="outlined"
                         sx={{
                             width: "40%",
                             marginRight: 2,
                         }}
-                        label="Username*"
-                        defaultValue={name}
-                        id="name-input"
-                        onChange={(e) => {
-                            checkName(e.target.value.trim());
-                        }}
-                    />
+                    >
+                        <InputLabel size="small" htmlFor="name-input">
+                            Username*
+                        </InputLabel>
+                        <OutlinedInput
+                            label="Username*"
+                            defaultValue={name}
+                            disabled={user && user.username ? true : false}
+                            id="name-input"
+                            size="small"
+                            sx={{ paddingRight: 0 }}
+                            onChange={(e) => {
+                                setChangedName(true);
+                                isNameTaken(e.target.value.trim());
+                            }}
+                            endAdornment={
+                                <InputAdornment variant="filled" position="end">
+                                    <Button
+                                        onClick={() =>
+                                            checkName(
+                                                (
+                                                    document.querySelector(
+                                                        "#name-input"
+                                                    ) as HTMLInputElement
+                                                ).value.trim()
+                                            )
+                                        }
+                                        sx={{ boxShadow: "none" }}
+                                        disabled={!changedName || nameTaken}
+                                    >
+                                        <CheckRounded />
+                                    </Button>
+                                </InputAdornment>
+                            }
+                        />
+                    </FormControl>
                     <FormControl sx={{ width: "20%", marginRight: 2 }}>
-                        <InputLabel required id="duration">
+                        <InputLabel size="small" required id="duration">
                             Timezone
                         </InputLabel>
                         <Select
@@ -281,27 +395,45 @@ const Event = () => {
                         </Select>
                     </FormControl>
 
-                    <Button
-                        sx={{ width: "30%" }}
-                        size="small"
-                        onClick={() => setAuthOpen(true)}
-                        disabled={nameTaken}
-                    >
-                        Sign in to save and edit meet
-                    </Button>
+                    {!authed ? (
+                        <Button
+                            sx={{ width: "30%" }}
+                            size="small"
+                            onClick={() => setAuthOpen(true)}
+                            disabled={nameTaken}
+                        >
+                            Sign in to save and edit meet
+                        </Button>
+                    ) : (
+                        <Button
+                            sx={{ width: "20%" }}
+                            size="small"
+                            onClick={() => {
+                                setAuthed(false);
+                                setUser({});
+                                localStorage.removeItem("auth-token");
+                            }}
+                        >
+                            Logout
+                        </Button>
+                    )}
                 </Box>
 
                 <Typography
-                    sx={{ opacity: nameTaken ? 1 : 0, transition: "all 0.2s" }}
+                    sx={{
+                        opacity: nameTaken || changedName ? 1 : 0,
+                        transition: "all 0.2s",
+                    }}
                     color={red[600]}
                     fontSize={14}
                 >
-                    <b>This name is taken/is invalid</b>
+                    <b>
+                        {nameTaken
+                            ? "This name is taken/invalid"
+                            : "Name has been edited, please save to proceed"}
+                    </b>
                 </Typography>
 
-                <Typography fontWeight={500} fontSize={14} mt={3}>
-                    Click/tap on the times and dates that suit you below
-                </Typography>
                 <Box display="flex" mt={2}>
                     <Box display="flex" alignItems="center" mr={10}>
                         <Box
@@ -337,14 +469,28 @@ const Event = () => {
                     </Box>
                 </Box>
 
-                <Box display="flex" alignItems="center" mt={6}>
-                    <Typography fontSize={20} mr={3}>
-                        {months[dates[0].getMonth()]}&nbsp;{dates[0].getDate()}{" "}
-                        - {months[dates[dates.length - 1].getMonth()]}&nbsp;
-                        {dates[dates.length - 1].getDate()}
-                    </Typography>
+                <Typography fontWeight={500} fontSize={16} mt={2}>
+                    Click/tap on the times and dates that suit you below
+                </Typography>
+
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    mt={4}
+                    pr={6}
+                >
+                    {dates.length !== 0 && (
+                        <Typography fontSize={20} mr={3}>
+                            {months[dates[0].getMonth()]}&nbsp;
+                            {dates[0].getDate()} -{" "}
+                            {months[dates[dates.length - 1].getMonth()]}&nbsp;
+                            {dates[dates.length - 1].getDate()}
+                        </Typography>
+                    )}
+
                     {event && event.type !== "week" && (
-                        <>
+                        <Box display="flex" alignItems="center">
                             <Button
                                 variant="text"
                                 onClick={() => changeDates(false)}
@@ -357,20 +503,26 @@ const Event = () => {
                             >
                                 <ChevronRight />
                             </Button>
-                        </>
+                        </Box>
                     )}
                 </Box>
 
                 <Box
-                    mt={2}
+                    mt={1}
                     id="calendar-container"
                     width="100%"
-                    height="66vh"
+                    height="68vh"
                     overflow="scroll"
                     position="relative"
                     sx={{
-                        pointerEvents: nameTaken ? "none" : "all",
-                        opacity: nameTaken ? 0.3 : 1,
+                        pointerEvents:
+                            nameTaken || event.name === undefined || changedName
+                                ? "none"
+                                : "all",
+                        opacity:
+                            nameTaken || event.name === undefined || changedName
+                                ? 0.3
+                                : 1,
                     }}
                 >
                     <Grid
@@ -439,7 +591,7 @@ const Event = () => {
                                                 <Box
                                                     sx={{
                                                         cursor: "pointer",
-                                                        transition: "all 0.2s",
+                                                        transition: "all 0.3s",
                                                     }}
                                                     key={i}
                                                     p={0.5}

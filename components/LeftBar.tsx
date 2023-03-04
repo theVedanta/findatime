@@ -85,9 +85,6 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     <AccessTimeOutlinedIcon />
                     &nbsp;Duration: {event && event.duration}
                 </Typography>
-                <Typography fontSize={14} mt={1} sx={{ opacity: 0.6 }}>
-                    *This meeting poll was created in India GMT+5 timezone
-                </Typography>
                 <Typography
                     fontSize={14}
                     fontWeight={200}
@@ -154,28 +151,42 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     width="100%"
                     justifyContent="space-between"
                     pr={12}
-                    mt={2}
+                    mt={3}
                     sx={{ opacity: 0.4 }}
                 >
-                    <EmailShareButton url={`${BASE_WEB_URL}/event`}>
+                    <EmailShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <EmailOutlined />
                     </EmailShareButton>
-                    <FacebookShareButton url={`${BASE_WEB_URL}/event`}>
+                    <FacebookShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <FacebookOutlined />
                     </FacebookShareButton>
-                    <LinkedinShareButton url={`${BASE_WEB_URL}/event`}>
+                    <LinkedinShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <LinkedIn />
                     </LinkedinShareButton>
-                    <RedditShareButton url={`${BASE_WEB_URL}/event`}>
+                    <RedditShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <Reddit />
                     </RedditShareButton>
-                    <TelegramShareButton url={`${BASE_WEB_URL}/event`}>
+                    <TelegramShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <Telegram />
                     </TelegramShareButton>
-                    <TwitterShareButton url={`${BASE_WEB_URL}/event`}>
+                    <TwitterShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <Twitter />
                     </TwitterShareButton>
-                    <WhatsappShareButton url={`${BASE_WEB_URL}/event`}>
+                    <WhatsappShareButton
+                        url={`${BASE_WEB_URL}/${event && event.id}`}
+                    >
                         <WhatsApp />
                     </WhatsappShareButton>
                 </Box>
@@ -183,7 +194,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                 <Typography
                     display="flex"
                     alignItems="center"
-                    mt={4}
+                    mt={5}
                     mb={1}
                     color="primary.500"
                     fontSize={18}
@@ -192,18 +203,18 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     <Check />
                     &nbsp;&nbsp;Best Available Times for Group
                 </Typography>
-                <Typography mt={0.6}>
+                <Typography mt={1.4}>
                     Fri 15th Oct, 12 - 12:30 PM - <u>All Available</u>
                 </Typography>
-                <Typography mt={0.6}>
+                <Typography mt={1.4}>
                     Sat 16th Oct, 12-12:30 PM - <u>4/5 Available</u>
                 </Typography>
-                <Typography mt={0.6}>
+                <Typography mt={1.4}>
                     Fri 15th Oct, 12 - 12:30 PM - <u>All Available</u>
                 </Typography>
 
                 <Box
-                    mt={4}
+                    mt={6}
                     pb={4}
                     id="user-section"
                     maxHeight={275}

@@ -80,7 +80,10 @@ const Index = () => {
         <>
             <Nav />
 
-            <Box mt={{ xs: 2, sm: 3, xl: 6 }} px={{ xs: 5, sm: 10, xl: 64 }}>
+            <Box
+                mt={{ xs: 10, sm: 12, xl: 16 }}
+                px={{ xs: 4, sm: 12, lg: 36, xl: 64 }}
+            >
                 <Typography mb={4} fontWeight={400} fontSize={28}>
                     Meeting Info
                 </Typography>

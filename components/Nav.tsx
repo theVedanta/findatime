@@ -14,7 +14,9 @@ const Nav = ({ name = "" }) => {
             py={2}
             color="primary.100"
             bgcolor="primary.900"
-            position="relative"
+            position="fixed"
+            top={0}
+            left={0}
             zIndex={20}
         >
             <MenuIcon />

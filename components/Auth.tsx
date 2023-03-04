@@ -6,7 +6,15 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { compare, hash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
-const Auth = ({ setAuthOpen, name, color }: any) => {
+const Auth = ({
+    setAuthOpen,
+    name,
+    color,
+    authed,
+    setAuthed,
+    setUser,
+    checkUniqueness,
+}: any) => {
     const [register, setRegister] = useState(true);
     const [nameTaken, setNameTaken] = useState(false);
     const [passMatch, setPassMatch] = useState(true);
@@ -15,27 +23,15 @@ const Auth = ({ setAuthOpen, name, color }: any) => {
     const [password, setPassword] = useState("");
     const [passwordConf, setPasswordConf] = useState("");
 
-    const checkUniqueness = async (nm: string) => {
-        const docsWithName = await getDocs(
-            query(collection(db, "users"), where("username", "==", nm))
-        );
-
-        setUsername(nm);
-        if (docsWithName.size > 0) {
-            setNameTaken(true);
-        } else {
-            setNameTaken(false);
-        }
-    };
-
     const signUpUser = async (clr: string) => {
         if (nameTaken || !passMatch) return;
-        if (password === "") return;
-        const userDoc = await addDoc(collection(db, "users"), {
+        if (password === "") return setPassMatch(false);
+        const userToAdd = {
             username,
             password: await hash(password, 10),
             color: clr,
-        });
+        };
+        const userDoc = await addDoc(collection(db, "users"), userToAdd);
 
         const access_token = sign(
             { id: userDoc.id.toString() },
@@ -43,11 +39,16 @@ const Auth = ({ setAuthOpen, name, color }: any) => {
             { expiresIn: "30d" }
         );
         localStorage.setItem("auth-token", access_token);
+        setAuthed(true);
+        setUser({ id: userDoc.id.toString(), ...userToAdd });
+        sessionStorage.removeItem("name");
+        sessionStorage.removeItem("color");
         setAuthOpen(false);
     };
+
     const loginUser = async () => {
         if (!nameTaken) return;
-        if (password === "") return;
+        if (password === "") return setPassMatch(false);
         const userArr = await getDocs(
             query(collection(db, "users"), where("username", "==", username))
         );
@@ -55,11 +56,20 @@ const Auth = ({ setAuthOpen, name, color }: any) => {
         if (await compare(password, userArr.docs[0].data().password)) {
             setIncrPass(false);
             const access_token = sign(
-                { id: userArr.docs[0].id.toString() },
+                {
+                    id: userArr.docs[0].id.toString(),
+                },
                 process.env.NEXT_PUBLIC_TOKEN_SECRET as string,
                 { expiresIn: "30d" }
             );
             localStorage.setItem("auth-token", access_token);
+            setAuthed(true);
+            setUser({
+                id: userArr.docs[0].id.toString(),
+                ...userArr.docs[0].data(),
+            });
+            sessionStorage.removeItem("name");
+            sessionStorage.removeItem("color");
             setAuthOpen(false);
         } else setIncrPass(true);
     };
@@ -107,7 +117,12 @@ const Auth = ({ setAuthOpen, name, color }: any) => {
                 </Typography>
 
                 <TextField
-                    onChange={(e) => checkUniqueness(e.target.value.trim())}
+                    onChange={async (e) => {
+                        setUsername(e.target.value.trim());
+                        (await checkUniqueness(e.target.value.trim()))
+                            ? setNameTaken(false)
+                            : setNameTaken(true);
+                    }}
                     label="Username"
                     required
                     defaultValue={username}
