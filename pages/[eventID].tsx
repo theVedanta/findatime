@@ -329,6 +329,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     setAuthOpen={setAuthOpen}
                     color={color}
                     checkUniqueness={checkUniqueness}
+                    setChangedName={setChangedName}
                 />
             )}
 

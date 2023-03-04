@@ -10,7 +10,7 @@ const Auth = ({
     setAuthOpen,
     name,
     color,
-    authed,
+    setChangedName,
     setAuthed,
     setUser,
     checkUniqueness,
@@ -43,6 +43,7 @@ const Auth = ({
         setUser({ id: userDoc.id.toString(), ...userToAdd });
         sessionStorage.removeItem("name");
         sessionStorage.removeItem("color");
+        setChangedName(false);
         setAuthOpen(false);
     };
 
@@ -70,6 +71,7 @@ const Auth = ({
             });
             sessionStorage.removeItem("name");
             sessionStorage.removeItem("color");
+            setChangedName(false);
             setAuthOpen(false);
         } else setIncrPass(true);
     };
