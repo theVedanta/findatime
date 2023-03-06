@@ -151,14 +151,14 @@ const Auth = ({
                         <b>Username is already taken</b>
                     </Typography>
                 )}
-                {!register && !nameTaken && (
-                    <Typography color={red[600]} fontSize={14}>
-                        <b>Username not found</b>
-                    </Typography>
-                )}
                 {register && !passMatch && (
                     <Typography color={red[600]} fontSize={14}>
                         <b>Passwords don&apos;t match</b>
+                    </Typography>
+                )}
+                {!register && !nameTaken && (
+                    <Typography color={red[600]} fontSize={14}>
+                        <b>Username not found</b>
                     </Typography>
                 )}
                 {!register && incrPass && (

@@ -1,5 +1,4 @@
 import { Avatar, Tooltip } from "@mui/material";
-import { useState } from "react";
 
 interface Props {
     src?: string;

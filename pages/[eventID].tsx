@@ -8,7 +8,6 @@ import {
     Button,
     FormControl,
     Grid,
-    IconButton,
     InputAdornment,
     InputLabel,
     MenuItem,
@@ -249,15 +248,6 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
     };
 
     useEffect(() => {
-        const dts = [new Date()];
-        const newDate = new Date();
-        for (let i = 0; i < 7; i++) {
-            newDate.setDate(newDate.getDate() + 1);
-            dts.push(new Date(newDate));
-        }
-
-        setDates(dts);
-
         const getEvent = async () => {
             try {
                 onSnapshot(doc(db, "meetings", eventID as string), (meet) => {
@@ -270,8 +260,19 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                 ? meetData.selections
                                 : []
                         );
-
                         setTimezone(meetData.timezone);
+
+                        // SETTING DATES
+                        const dts = [new Date()];
+                        const newDate = new Date();
+                        const numberOfDays = meetData.type === "day" ? 0 : 7;
+
+                        for (let i = 0; i < numberOfDays; i++) {
+                            newDate.setDate(newDate.getDate() + 1);
+                            dts.push(new Date(newDate));
+                        }
+
+                        setDates(dts);
                     } else {
                         window.location.href = "/";
                         showErr("Meet not found");
@@ -481,14 +482,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     mt={4}
                     pr={6}
                 >
-                    {dates.length !== 0 && (
-                        <Typography fontSize={20} mr={3}>
-                            {months[dates[0].getMonth()]}&nbsp;
-                            {dates[0].getDate()} -{" "}
-                            {months[dates[dates.length - 1].getMonth()]}&nbsp;
-                            {dates[dates.length - 1].getDate()}
-                        </Typography>
-                    )}
+                    {dates.length !== 0 ||
+                        (event && event.type === "day" && (
+                            <Typography fontSize={20} mr={3}>
+                                {months[dates[0].getMonth()]}&nbsp;
+                                {dates[0].getDate()} -{" "}
+                                {months[dates[dates.length - 1].getMonth()]}
+                                &nbsp;
+                                {dates[dates.length - 1].getDate()}
+                            </Typography>
+                        ))}
 
                     {event && event.type !== "week" && event.type !== "day" && (
                         <Box display="flex" alignItems="center">
@@ -529,13 +532,17 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     <Grid
                         container
                         spacing={0}
-                        width={`${dates.length * 15}%`}
+                        width={
+                            event && event.type === "day"
+                                ? `96%`
+                                : `${dates.length * 15}%`
+                        }
                         columns={dates.length + 1}
                     >
                         {/* COLUMN 1 */}
                         <Grid
                             item
-                            width="3%"
+                            width="3.5%"
                             position="sticky"
                             left="0"
                             top="0"
@@ -546,7 +553,14 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             {/* SLOTS */}
                             {slots.map((slot) => (
                                 <Grid item key={slot}>
-                                    <Box height="8vh" bgcolor="white">
+                                    <Box
+                                        height={
+                                            event && event.type === "day"
+                                                ? "6vh"
+                                                : "8vh"
+                                        }
+                                        bgcolor="white"
+                                    >
                                         <Typography>{slot}</Typography>
                                     </Box>
                                 </Grid>
@@ -555,7 +569,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         {dates.map((date) => (
                             <Grid
                                 item
-                                width={`${97 / dates.length}%`}
+                                width={`${96.5 / dates.length}%`}
                                 key={date.getDate()}
                             >
                                 <Box
@@ -569,7 +583,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     bgcolor="white"
                                 >
                                     <Typography>
-                                        {event && event.type === "specific" ? (
+                                        {(event && event.type === "specific") ||
+                                        (event && event.type === "day") ? (
                                             <>
                                                 {months[date.getMonth()].slice(
                                                     0,
@@ -581,10 +596,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                     3
                                                 )}
                                             </>
-                                        ) : event && event.type === "week" ? (
-                                            <>{days[date.getDay()]}</>
                                         ) : (
-                                            <></>
+                                            <>{days[date.getDay()]}</>
                                         )}
                                     </Typography>
                                 </Box>
@@ -594,7 +607,11 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                             // bgcolor="primary.200"
                                             border="0.5px solid"
                                             borderColor="primary.800"
-                                            height="8vh"
+                                            height={
+                                                event && event.type === "day"
+                                                    ? "6vh"
+                                                    : "8vh"
+                                            }
                                             width="100%"
                                             bgcolor="primary.200"
                                         >
@@ -621,6 +638,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                                 ? "primary.500"
                                                                 : "primary.300"
                                                             : "primary.200"
+                                                    }
+                                                    display={
+                                                        event &&
+                                                        event.type === "day"
+                                                            ? "flex"
+                                                            : "inline-block"
                                                     }
                                                     alignItems="center"
                                                     px={2}
@@ -688,7 +711,13 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                                         name={
                                                                             sel.name
                                                                         }
-                                                                        size="sm"
+                                                                        size={
+                                                                            event &&
+                                                                            event.type !==
+                                                                                "day"
+                                                                                ? "sm"
+                                                                                : "def"
+                                                                        }
                                                                         color={
                                                                             sel.color
                                                                         }

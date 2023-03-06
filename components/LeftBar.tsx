@@ -164,7 +164,13 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     display="flex"
                     alignItems="center"
                     width="100%"
-                    boxShadow="0 0 10px rgba(0, 0, 0, 0.16)"
+                    // boxShadow="0 0 10px rgba(0, 0, 0, 0.16)"
+                    sx={{
+                        border: "2px solid rgba(0, 0, 0, 0.3)",
+                        ":hover": {
+                            border: "2px solid rgba(0, 0, 0, 0.5)",
+                        },
+                    }}
                     borderRadius="5px"
                 >
                     <Box
@@ -189,7 +195,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                         alignItems="center"
                         py={1}
                         px={2}
-                        borderRadius="0 5px 5px 0"
+                        borderRadius="0 3px 3px 0"
                         sx={{ cursor: "pointer" }}
                         onClick={() => {
                             setCopied(true);

@@ -58,6 +58,16 @@ const theme = createTheme({
                 size: "large",
             },
         },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    color: "#fff",
+                    ":hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                    },
+                },
+            },
+        },
     },
 });
 

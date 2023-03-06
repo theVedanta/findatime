@@ -19,10 +19,10 @@ const BottomNav = () => {
             left={0}
         >
             <Box display="flex" width="33.33333333%">
-                <Typography display="flex" alignItems="center">
+                {/* <Typography display="flex" alignItems="center">
                     <EventIcon /> &nbsp;&nbsp;Plan a meet
-                </Typography>
-                <Typography display="flex" alignItems="center" ml={3}>
+                </Typography> */}
+                <Typography display="flex" alignItems="center">
                     <InfoOutlinedIcon />
                     &nbsp;&nbsp;Learn More
                 </Typography>
