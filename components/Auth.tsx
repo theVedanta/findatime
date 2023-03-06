@@ -41,8 +41,8 @@ const Auth = ({
         localStorage.setItem("auth-token", access_token);
         setAuthed(true);
         setUser({ id: userDoc.id.toString(), ...userToAdd });
-        sessionStorage.removeItem("name");
-        sessionStorage.removeItem("color");
+        localStorage.removeItem("name");
+        localStorage.removeItem("color");
         setChangedName(false);
         setAuthOpen(false);
     };
@@ -69,8 +69,8 @@ const Auth = ({
                 id: userArr.docs[0].id.toString(),
                 ...userArr.docs[0].data(),
             });
-            sessionStorage.removeItem("name");
-            sessionStorage.removeItem("color");
+            localStorage.removeItem("name");
+            localStorage.removeItem("color");
             setChangedName(false);
             setAuthOpen(false);
         } else setIncrPass(true);

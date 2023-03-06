@@ -30,21 +30,21 @@ export default function App({ Component, pageProps }: AppProps) {
                     );
                     if (userDoc.exists()) {
                         setAuthed(true);
-                        sessionStorage.removeItem("name");
-                        sessionStorage.removeItem("color");
+                        localStorage.removeItem("name");
+                        localStorage.removeItem("color");
                         return setUser({
                             username: userDoc.data().username,
                             id: userDoc.id,
                             color: userDoc.data().color,
                         });
-                    } else {
-                        localStorage.removeItem("auth-token");
-                        return setAuthed(false);
                     }
-                } else {
+
                     localStorage.removeItem("auth-token");
                     return setAuthed(false);
                 }
+
+                localStorage.removeItem("auth-token");
+                return setAuthed(false);
             } catch (err) {
                 console.log(err);
                 localStorage.removeItem("auth-token");

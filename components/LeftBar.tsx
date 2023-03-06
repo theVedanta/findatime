@@ -22,7 +22,7 @@ import {
     Twitter,
     WhatsApp,
 } from "@mui/icons-material";
-import { BASE_WEB_URL } from "../base";
+import { BASE_WEB_URL, days, months } from "../base";
 import UserIcon from "../components/UserIcon";
 import { useState, useEffect } from "react";
 import { Meeting } from "../types";
@@ -35,8 +35,10 @@ interface User {
 const LeftBar = ({ event }: { event: Meeting }) => {
     const [grpMembers, setGrpMembers] = useState<User[]>([]);
     const [copied, setCopied] = useState(false);
+    const [bestTimes, setBestTimes] = useState<string[]>([]);
 
     useEffect(() => {
+        // SETTING GRP MEMBERS
         let users =
             event &&
             event.selections &&
@@ -51,6 +53,67 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                 (v, i, a) => a.findIndex((v2) => v2.name === v.name) === i
             );
         setGrpMembers(users as User[]);
+
+        // SETTING SUITED TIMES
+        function getMax(arr: number[]) {
+            let max = 0;
+            arr.forEach((elem) => {
+                if (elem > max) {
+                    max = elem;
+                }
+            });
+
+            return max;
+        }
+
+        let pCountObj: { [key: string]: number } = {};
+        let bestTimeConst: string[] = [];
+
+        event &&
+            event.selections &&
+            event.selections.forEach((sel) => {
+                const selDate = new Date(sel.date);
+                const dateAndSlot = `${selDate.getMonth()}/${selDate.getDate()}/${selDate.getFullYear()} ${
+                    sel.slot
+                }`;
+                pCountObj[dateAndSlot] = pCountObj[dateAndSlot]
+                    ? pCountObj[dateAndSlot] + 1
+                    : 1;
+            });
+
+        let selCountArr = Object.values(pCountObj);
+        let highSelCount = [];
+
+        let i = 0;
+        while (i < 3) {
+            const newMax = getMax(selCountArr);
+            highSelCount.push(newMax);
+            selCountArr.splice(selCountArr.indexOf(newMax), 1);
+
+            i += 1;
+        }
+
+        highSelCount.forEach((cnt) => {
+            const key = Object.keys(pCountObj).find(
+                (k) => pCountObj[k] === cnt
+            );
+            if (key !== undefined) {
+                const dt = new Date((key as string).split(" ")[0]);
+                bestTimeConst.push(
+                    `${days[dt.getDay()].slice(0, 3)} ${dt.getDate()} ${
+                        months[dt.getMonth()]
+                    }, ${(key as string).split(" ")[1]} - ${
+                        cnt === (users as []).length
+                            ? "All"
+                            : `${cnt}/${(users as []).length}`
+                    } Available`
+                );
+
+                delete pCountObj[key];
+            }
+        });
+
+        setBestTimes(bestTimeConst);
     }, [event]);
 
     return (
@@ -91,8 +154,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     mt={1}
                     fontStyle="italic"
                 >
-                    Note: This is the poll to decide the best time for Exile
-                    members to meet to discuss Issue#2
+                    {event && event.note && <>Note: {event.note}</>}
                 </Typography>
 
                 <Typography mt={4} mb={1} fontSize={18}>
@@ -191,78 +253,77 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     </WhatsappShareButton>
                 </Box>
 
-                <Typography
-                    display="flex"
-                    alignItems="center"
-                    mt={5}
-                    mb={1}
-                    color="primary.500"
-                    fontSize={18}
-                    fontWeight={500}
-                >
-                    <Check />
-                    &nbsp;&nbsp;Best Available Times for Group
-                </Typography>
-                <Typography mt={1.4}>
-                    Fri 15th Oct, 12 - 12:30 PM - <u>All Available</u>
-                </Typography>
-                <Typography mt={1.4}>
-                    Sat 16th Oct, 12-12:30 PM - <u>4/5 Available</u>
-                </Typography>
-                <Typography mt={1.4}>
-                    Fri 15th Oct, 12 - 12:30 PM - <u>All Available</u>
-                </Typography>
-
-                <Box
-                    mt={6}
-                    pb={4}
-                    id="user-section"
-                    maxHeight={275}
-                    overflow="scroll"
-                >
-                    <Typography
-                        display="flex"
-                        alignItems="center"
-                        mb={2}
-                        fontSize={18}
-                        fontWeight={500}
-                    >
-                        <PeopleAltOutlined />
-                        &nbsp;&nbsp; Group Members
-                    </Typography>
-
-                    {grpMembers &&
-                        grpMembers.map((mem) => (
-                            <Box
-                                key={mem.name}
-                                display="flex"
-                                alignItems="center"
-                                mt={1}
-                            >
-                                <UserIcon
-                                    letter={(
-                                        mem.name[0] + mem.name.slice(-1)
-                                    ).toUpperCase()}
-                                    color={mem.color}
-                                />
-                                <Typography
-                                    fontSize={17}
-                                    fontWeight={100}
-                                    ml={2}
-                                >
-                                    {mem.name}
-                                </Typography>
-                            </Box>
+                {bestTimes && bestTimes.length !== 0 && (
+                    <>
+                        <Typography
+                            display="flex"
+                            alignItems="center"
+                            mt={5}
+                            mb={1}
+                            color="primary.500"
+                            fontSize={18}
+                            fontWeight={500}
+                        >
+                            <Check />
+                            &nbsp;&nbsp;Best Available Times for Group
+                        </Typography>
+                        {bestTimes.map((tm, i) => (
+                            <Typography key={i} mt={1.4}>
+                                {tm}
+                            </Typography>
                         ))}
-                </Box>
+                    </>
+                )}
+
+                {grpMembers && grpMembers.length !== 0 && (
+                    <Box
+                        mt={6}
+                        pb={4}
+                        id="user-section"
+                        maxHeight={275}
+                        overflow="scroll"
+                    >
+                        <Typography
+                            display="flex"
+                            alignItems="center"
+                            mb={2}
+                            fontSize={18}
+                            fontWeight={500}
+                        >
+                            <PeopleAltOutlined />
+                            &nbsp;&nbsp; Group Members
+                        </Typography>
+
+                        {grpMembers &&
+                            grpMembers.map((mem) => (
+                                <Box
+                                    key={mem.name}
+                                    display="flex"
+                                    alignItems="center"
+                                    mt={1}
+                                >
+                                    <UserIcon
+                                        letter={(
+                                            mem.name[0] + mem.name.slice(-1)
+                                        ).toUpperCase()}
+                                        color={mem.color}
+                                    />
+                                    <Typography
+                                        fontSize={17}
+                                        fontWeight={100}
+                                        ml={2}
+                                    >
+                                        {mem.name}
+                                    </Typography>
+                                </Box>
+                            ))}
+                    </Box>
+                )}
             </Box>
 
             <Box>
-                <Button size="small" sx={{ marginBottom: 2 }}>
-                    Email Reminder
-                </Button>
+                <Button sx={{ marginBottom: 2 }}>Email Reminder</Button>
                 <Button
-                    size="small"
                     sx={{
                         background: "transparent",
                         color: "#1E88E5",

@@ -15,19 +15,13 @@ import {
     OutlinedInput,
     Select,
     Snackbar,
-    TextField,
     Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import {
-    CheckRounded,
-    ChevronLeft,
-    ChevronRight,
-    EnergySavingsLeafTwoTone,
-} from "@mui/icons-material";
+import { CheckRounded, ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { colors, days, months, slots } from "../base";
 import UserIcon from "../components/UserIcon";
-import { red } from "@mui/material/colors";
+import { red, blueGrey } from "@mui/material/colors";
 import { Meeting, Selection } from "../types";
 import {
     collection,
@@ -141,11 +135,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
         return nm + ` ${Math.trunc(Math.random() * 10000)}`;
     };
 
-    const updateNameInSelections = (fromName: string, toName: string) => {
+    const updateNameInSelections = (
+        fromName: string,
+        toName: string,
+        toClr: string = color
+    ) => {
         const selsCopy = [...selections];
-        selsCopy.forEach((sel, i) => {
+        selsCopy.forEach((sel) => {
             if (sel.name === fromName) {
                 sel["name"] = toName;
+                sel["color"] = toClr;
             }
         });
 
@@ -168,7 +167,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
 
     const checkName: any = async (
         nm: string = name,
-        change: boolean = false
+        change: boolean = false,
+        clr: string = color
     ) => {
         setChangedName(false);
         // nm is newly entered name
@@ -192,12 +192,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     checkName(newName, true);
                 } else {
                     setName(newName);
-                    sessionStorage.setItem("name", newName);
+                    localStorage.setItem("name", newName);
                 }
             }
         } else {
-            updateNameInSelections(name, nm);
-            typeof window !== "undefined" && sessionStorage.setItem("name", nm);
+            updateNameInSelections(name, nm, clr);
+            typeof window !== "undefined" && localStorage.setItem("name", nm);
             setName(nm);
             if (change)
                 (
@@ -288,26 +288,26 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
     useEffect(() => {
         if (authed !== "check") {
             if (user && user.username) {
-                updateNameInSelections(name, user.username);
+                updateNameInSelections(name, user.username, user.color);
+
                 setNameTaken(false);
                 setName(user.username);
                 (
                     document.querySelector("#name-input") as HTMLInputElement
                 ).value = user.username;
-
                 setColor(user.color);
-            } else if (sessionStorage.getItem("name")) {
-                checkName(sessionStorage.getItem("name") as string, true);
-                setColor(sessionStorage.getItem("color") as string);
+            } else if (localStorage.getItem("name")) {
+                checkName(localStorage.getItem("name") as string, true);
+                setColor(localStorage.getItem("color") as string);
             } else {
+                const newClr = colors[Math.trunc(Math.random() * 10)];
+                setColor(newClr);
+                localStorage.setItem("color", newClr);
+
                 checkName(
                     `New user ${Math.trunc(Math.random() * 10000).toString()}`,
-                    true
-                );
-                setColor(colors[Math.trunc(Math.random() * 10)]);
-                sessionStorage.setItem(
-                    "color",
-                    colors[Math.trunc(Math.random() * 10)]
+                    true,
+                    newClr
                 );
             }
         }
@@ -425,7 +425,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         opacity: nameTaken || changedName ? 1 : 0,
                         transition: "all 0.2s",
                     }}
-                    color={red[600]}
+                    color={nameTaken ? red[600] : blueGrey[700]}
                     fontSize={14}
                 >
                     <b>
@@ -490,7 +490,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         </Typography>
                     )}
 
-                    {event && event.type !== "week" && (
+                    {event && event.type !== "week" && event.type !== "day" && (
                         <Box display="flex" alignItems="center">
                             <Button
                                 variant="text"
@@ -569,9 +569,23 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     bgcolor="white"
                                 >
                                     <Typography>
-                                        {months[date.getMonth()].slice(0, 3)}{" "}
-                                        {date.getDate()},{" "}
-                                        {days[date.getDay()].slice(0, 3)}
+                                        {event && event.type === "specific" ? (
+                                            <>
+                                                {months[date.getMonth()].slice(
+                                                    0,
+                                                    3
+                                                )}{" "}
+                                                {date.getDate()},{" "}
+                                                {days[date.getDay()].slice(
+                                                    0,
+                                                    3
+                                                )}
+                                            </>
+                                        ) : event && event.type === "week" ? (
+                                            <>{days[date.getDay()]}</>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </Typography>
                                 </Box>
                                 {slots.map((slot) => (
@@ -610,9 +624,9 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                     }
                                                     alignItems="center"
                                                     px={2}
-                                                    onClick={() => {
-                                                        boxClick(date, slot, i);
-                                                    }}
+                                                    onClick={() =>
+                                                        boxClick(date, slot, i)
+                                                    }
                                                     borderLeft={
                                                         matchBox(
                                                             date,
