@@ -29,7 +29,7 @@ const Nav = ({ name = "" }) => {
             justifyContent="space-between"
             alignItems="center"
             px={6}
-            py={2}
+            py={1}
             color="primary.100"
             bgcolor="primary.900"
             position="fixed"

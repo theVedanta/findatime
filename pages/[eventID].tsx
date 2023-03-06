@@ -340,7 +340,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         variant="outlined"
                         sx={{
                             width: "40%",
-                            marginRight: 2,
+                            marginRight: 3.6,
                         }}
                     >
                         <InputLabel size="small" htmlFor="name-input">
@@ -378,7 +378,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             }
                         />
                     </FormControl>
-                    <FormControl sx={{ width: "20%", marginRight: 2 }}>
+                    <FormControl sx={{ width: "20%", marginRight: 3.6 }}>
                         <InputLabel size="small" required id="duration">
                             Timezone
                         </InputLabel>
@@ -399,7 +399,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
 
                     {!authed ? (
                         <Button
-                            sx={{ width: "30%" }}
+                            sx={{ width: "auto", padding: "0 50px" }}
                             size="small"
                             onClick={() => setAuthOpen(true)}
                             disabled={nameTaken}
@@ -420,7 +420,6 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         </Button>
                     )}
                 </Box>
-
                 <Typography
                     sx={{
                         opacity: nameTaken || changedName ? 1 : 0,
@@ -435,7 +434,6 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             : "Name has been edited, please save to proceed"}
                     </b>
                 </Typography>
-
                 <Box display="flex" mt={2}>
                     <Box display="flex" alignItems="center" mr={10}>
                         <Box
@@ -470,11 +468,9 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         <Typography ml={1}>No one available</Typography>
                     </Box>
                 </Box>
-
                 <Typography fontWeight={500} fontSize={16} mt={2}>
                     Click/tap on the times and dates that suit you below
                 </Typography>
-
                 <Box
                     display="flex"
                     alignItems="center"
@@ -482,16 +478,15 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     mt={4}
                     pr={6}
                 >
-                    {dates.length !== 0 ||
-                        (event && event.type === "day" && (
-                            <Typography fontSize={20} mr={3}>
-                                {months[dates[0].getMonth()]}&nbsp;
-                                {dates[0].getDate()} -{" "}
-                                {months[dates[dates.length - 1].getMonth()]}
-                                &nbsp;
-                                {dates[dates.length - 1].getDate()}
-                            </Typography>
-                        ))}
+                    {dates.length !== 0 && event && event.type !== "day" && (
+                        <Typography fontSize={20} mr={3}>
+                            {months[dates[0].getMonth()]}&nbsp;
+                            {dates[0].getDate()} -{" "}
+                            {months[dates[dates.length - 1].getMonth()]}
+                            &nbsp;
+                            {dates[dates.length - 1].getDate()}
+                        </Typography>
+                    )}
 
                     {event && event.type !== "week" && event.type !== "day" && (
                         <Box display="flex" alignItems="center">
