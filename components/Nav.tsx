@@ -1,15 +1,8 @@
-import {
-    Box,
-    Button,
-    Drawer,
-    IconButton,
-    Stack,
-    Typography,
-    getDialogTitleUtilityClass,
-} from "@mui/material";
+import { Box, Button, Drawer, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import { BiCalendarPlus, BiUser } from "react-icons/bi";
+import { BiCalendarPlus } from "react-icons/bi";
+import { RxCross2 } from "react-icons/rx";
 import Link from "next/link";
 import { useState } from "react";
 import { Person } from "@mui/icons-material";
@@ -28,7 +21,7 @@ const Nav = ({ name = "" }) => {
             width="100%"
             justifyContent="space-between"
             alignItems="center"
-            px={6}
+            px={{ xs: 3, sm: 6 }}
             py={1}
             color="primary.100"
             bgcolor="primary.900"
@@ -55,6 +48,18 @@ const Nav = ({ name = "" }) => {
                 >
                     FindATime
                 </Typography>
+                <IconButton
+                    sx={{
+                        color: "#000",
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        fontSize: 28,
+                    }}
+                    onClick={() => setDrawerOpen(false)}
+                >
+                    <RxCross2 />
+                </IconButton>
                 <Box sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.2)" }}>
                     {Object.keys(links).map((title) => (
                         <Link

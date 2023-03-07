@@ -334,12 +334,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                 />
             )}
 
-            <Box pl="26%" mt={12}>
-                <Box display="flex">
+            <Box pl={{ xs: 3, sm: "26%" }} pr={{ xs: 3, sm: 0 }} mt={12}>
+                <Box display="flex" flexWrap={{ xs: "wrap", sm: "nowrap" }}>
                     <FormControl
                         variant="outlined"
                         sx={{
-                            width: "40%",
+                            width: "30%",
                             marginRight: 3.6,
                         }}
                     >
@@ -378,7 +378,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             }
                         />
                     </FormControl>
-                    <FormControl sx={{ width: "20%", marginRight: 3.6 }}>
+                    <FormControl
+                        sx={{
+                            width: "20%",
+                            marginRight: 3.6,
+                        }}
+                    >
                         <InputLabel size="small" required id="duration">
                             Timezone
                         </InputLabel>
@@ -399,7 +404,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
 
                     {!authed ? (
                         <Button
-                            sx={{ width: "auto", padding: "0 50px" }}
+                            sx={{
+                                width: "auto",
+                                padding: "0 50px",
+                            }}
                             size="small"
                             onClick={() => setAuthOpen(true)}
                             disabled={nameTaken}
@@ -408,7 +416,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         </Button>
                     ) : (
                         <Button
-                            sx={{ width: "20%" }}
+                            sx={{
+                                xs: { width: "100%", padding: 0 },
+                                sm: { width: "auto", padding: "0 50px" },
+                            }}
                             size="small"
                             onClick={() => {
                                 setAuthed(false);
@@ -434,7 +445,11 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             : "Name has been edited, please save to proceed"}
                     </b>
                 </Typography>
-                <Box display="flex" mt={2}>
+                <Box
+                    display="flex"
+                    mt={2}
+                    flexWrap={{ xs: "wrap", sm: "nowrap" }}
+                >
                     <Box display="flex" alignItems="center" mr={10}>
                         <Box
                             width={16}
@@ -513,6 +528,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                     height="68vh"
                     overflow="scroll"
                     position="relative"
+                    display={{ xs: "none", sm: "inline-block" }}
                     sx={{
                         pointerEvents:
                             nameTaken || event.name === undefined || changedName

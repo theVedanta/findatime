@@ -83,6 +83,7 @@ const Index = () => {
             <Box
                 mt={{ xs: 10, sm: 12, xl: 16 }}
                 px={{ xs: 4, sm: 12, lg: 36, xl: 64 }}
+                mb={{ xs: 8, sm: 0 }}
             >
                 <Typography mb={4} fontWeight={400} fontSize={28}>
                     Meeting Info

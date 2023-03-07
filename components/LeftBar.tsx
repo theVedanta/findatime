@@ -16,6 +16,8 @@ import {
     EmailOutlined,
     FacebookOutlined,
     LinkedIn,
+    Mail,
+    MailOutline,
     PeopleAltOutlined,
     Reddit,
     Telegram,
@@ -26,6 +28,7 @@ import { BASE_WEB_URL, days, months } from "../base";
 import UserIcon from "../components/UserIcon";
 import { useState, useEffect } from "react";
 import { Meeting } from "../types";
+import Image from "next/image";
 
 interface User {
     name: string;
@@ -130,7 +133,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
             pb={2}
             px={4}
             bgcolor="white"
-            display="flex"
+            display={{ xs: "none", sm: "flex" }}
             flexDirection="column"
             justifyContent="space-between"
         >
@@ -328,7 +331,10 @@ const LeftBar = ({ event }: { event: Meeting }) => {
             </Box>
 
             <Box>
-                <Button sx={{ marginBottom: 2 }}>Email Reminder</Button>
+                <Button sx={{ marginBottom: 2 }}>
+                    <MailOutline />
+                    &nbsp;&nbsp;Email Reminder
+                </Button>
                 <Button
                     sx={{
                         background: "transparent",
@@ -336,7 +342,13 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                         ":hover": { background: "transparent" },
                     }}
                 >
-                    Add to Google Calendar
+                    <Image
+                        src="/assets/google-calendar.png"
+                        alt="google calendar"
+                        width={20}
+                        height={20}
+                    />
+                    &nbsp;&nbsp;Add to Google Calendar
                 </Button>
             </Box>
         </Box>

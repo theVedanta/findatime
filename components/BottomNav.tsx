@@ -7,21 +7,19 @@ const BottomNav = () => {
     return (
         <Box
             display="flex"
+            flexWrap={{ xs: "wrap", sm: "nowrap" }}
             width="100%"
             justifyContent="space-between"
             alignItems="center"
-            px={6}
+            px={{ xs: 3, sm: 6 }}
             py={2}
             color="primary.100"
             bgcolor="primary.900"
-            position="absolute"
+            position={{ xs: "static", sm: "absolute" }}
             bottom={0}
             left={0}
         >
-            <Box display="flex" width="33.33333333%">
-                {/* <Typography display="flex" alignItems="center">
-                    <EventIcon /> &nbsp;&nbsp;Plan a meet
-                </Typography> */}
+            <Box display="flex" width={{ xs: "50%", sm: "33.33333333%" }}>
                 <Typography display="flex" alignItems="center">
                     <InfoOutlinedIcon />
                     &nbsp;&nbsp;Learn More
@@ -30,16 +28,17 @@ const BottomNav = () => {
             <Typography
                 display="flex"
                 alignItems="center"
-                width="33.33333333%"
+                width={{ xs: "50%", sm: "33.33333333%" }}
                 justifyContent="center"
             >
                 <FavoriteBorderOutlinedIcon />
                 &nbsp;&nbsp;Support the Project
             </Typography>
             <Typography
-                width="33.33333333%"
+                width={{ xs: "50%", sm: "33.33333333%" }}
                 display="flex"
-                justifyContent="flex-end"
+                mt={{ xs: 3, sm: 0 }}
+                justifyContent={{ xs: "flex-start", sm: "flex-end" }}
             >
                 FindaTime © 2022
             </Typography>
