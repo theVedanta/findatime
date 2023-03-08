@@ -6,6 +6,7 @@ import {
     AvatarGroup,
     Box,
     Button,
+    Fab,
     FormControl,
     Grid,
     InputAdornment,
@@ -17,7 +18,13 @@ import {
     Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import { CheckRounded, ChevronLeft, ChevronRight } from "@mui/icons-material";
+import {
+    CheckRounded,
+    ChevronLeft,
+    ChevronRight,
+    Fullscreen,
+    FullscreenExit,
+} from "@mui/icons-material";
 import { colors, days, months, slots } from "../base";
 import UserIcon from "../components/UserIcon";
 import { red, blueGrey } from "@mui/material/colors";
@@ -48,6 +55,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
     const [authOpen, setAuthOpen] = useState(false);
     const [color, setColor] = useState("");
     const [changedName, setChangedName] = useState(false);
+    const [fullScreen, setFullScreen] = useState(false);
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
@@ -334,201 +342,234 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                 />
             )}
 
-            <Box pl={{ xs: 3, sm: "26%" }} pr={{ xs: 3, sm: 0 }} mt={12}>
-                <Box display="flex" flexWrap={{ xs: "wrap", sm: "nowrap" }}>
-                    <FormControl
-                        variant="outlined"
-                        sx={{
-                            width: "30%",
-                            marginRight: 3.6,
-                        }}
-                    >
-                        <InputLabel size="small" htmlFor="name-input">
-                            Username*
-                        </InputLabel>
-                        <OutlinedInput
-                            label="Username*"
-                            defaultValue={name}
-                            disabled={user && user.username ? true : false}
-                            id="name-input"
-                            size="small"
-                            sx={{ paddingRight: 0 }}
-                            onChange={(e) => {
-                                setChangedName(true);
-                                isNameTaken(e.target.value.trim());
+            <Box pl={{ xs: 0, sm: "26%" }} pr={{ xs: 0, sm: 0 }} mt={12}>
+                <Box px={{ xs: 3, sm: 0 }}>
+                    <Box display="flex" flexWrap={{ xs: "wrap", sm: "nowrap" }}>
+                        <FormControl
+                            variant="outlined"
+                            sx={{
+                                width: { xs: "100%", sm: "30%" },
+                                marginRight: { xs: 0, sm: 3.6 },
+                                mb: { xs: 2, sm: 0 },
                             }}
-                            endAdornment={
-                                <InputAdornment variant="filled" position="end">
-                                    <Button
-                                        onClick={() =>
-                                            checkName(
-                                                (
-                                                    document.querySelector(
-                                                        "#name-input"
-                                                    ) as HTMLInputElement
-                                                ).value.trim()
-                                            )
-                                        }
-                                        sx={{ boxShadow: "none" }}
-                                        disabled={!changedName || nameTaken}
+                        >
+                            <InputLabel size="small" htmlFor="name-input">
+                                Username*
+                            </InputLabel>
+                            <OutlinedInput
+                                label="Username*"
+                                defaultValue={name}
+                                disabled={user && user.username ? true : false}
+                                id="name-input"
+                                size="small"
+                                sx={{ paddingRight: 0 }}
+                                onChange={(e) => {
+                                    setChangedName(true);
+                                    isNameTaken(e.target.value.trim());
+                                }}
+                                endAdornment={
+                                    <InputAdornment
+                                        variant="filled"
+                                        position="end"
                                     >
-                                        <CheckRounded />
-                                    </Button>
-                                </InputAdornment>
-                            }
-                        />
-                    </FormControl>
-                    <FormControl
+                                        <Button
+                                            onClick={() =>
+                                                checkName(
+                                                    (
+                                                        document.querySelector(
+                                                            "#name-input"
+                                                        ) as HTMLInputElement
+                                                    ).value.trim()
+                                                )
+                                            }
+                                            sx={{ boxShadow: "none" }}
+                                            disabled={!changedName || nameTaken}
+                                        >
+                                            <CheckRounded />
+                                        </Button>
+                                    </InputAdornment>
+                                }
+                            />
+                        </FormControl>
+
+                        <FormControl
+                            sx={{
+                                width: { xs: "100%", sm: "30%" },
+                                marginRight: { xs: 0, sm: 3.6 },
+                                mb: { xs: 2, sm: 0 },
+                            }}
+                        >
+                            <InputLabel size="small" required id="duration">
+                                Timezone
+                            </InputLabel>
+                            <Select
+                                required
+                                labelId="duration"
+                                name="duration"
+                                id="duration"
+                                label="duration"
+                                value={timezone}
+                                onChange={(e) => setTimezone(e.target.value)}
+                            >
+                                <MenuItem value={"India (GMT+5)"}>
+                                    India (GMT+5)
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        {!authed ? (
+                            <Button
+                                sx={{
+                                    width: { xs: "100%", sm: "auto" },
+                                    padding: { xs: "8px 0", sm: "0 40px" },
+                                }}
+                                size="small"
+                                onClick={() => setAuthOpen(true)}
+                                disabled={nameTaken}
+                            >
+                                Sign in to save and edit meet
+                            </Button>
+                        ) : (
+                            <Button
+                                sx={{
+                                    width: { xs: "100%", sm: "auto" },
+                                    padding: { xs: "8px 0", sm: "0 40px" },
+                                }}
+                                size="small"
+                                onClick={() => {
+                                    setAuthed(false);
+                                    setUser({});
+                                    localStorage.removeItem("auth-token");
+                                }}
+                            >
+                                Logout
+                            </Button>
+                        )}
+                    </Box>
+                    <Typography
                         sx={{
-                            width: "20%",
-                            marginRight: 3.6,
+                            opacity: nameTaken || changedName ? 1 : 0,
+                            transition: "all 0.2s",
                         }}
+                        color={nameTaken ? red[600] : blueGrey[700]}
+                        fontSize={14}
+                        mt={{ xs: 1, sm: 0 }}
                     >
-                        <InputLabel size="small" required id="duration">
-                            Timezone
-                        </InputLabel>
-                        <Select
-                            required
-                            labelId="duration"
-                            name="duration"
-                            id="duration"
-                            label="duration"
-                            value={timezone}
-                            onChange={(e) => setTimezone(e.target.value)}
-                        >
-                            <MenuItem value={"India (GMT+5)"}>
-                                India (GMT+5)
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
-
-                    {!authed ? (
-                        <Button
-                            sx={{
-                                width: "auto",
-                                padding: "0 50px",
-                            }}
-                            size="small"
-                            onClick={() => setAuthOpen(true)}
-                            disabled={nameTaken}
-                        >
-                            Sign in to save and edit meet
-                        </Button>
-                    ) : (
-                        <Button
-                            sx={{
-                                xs: { width: "100%", padding: 0 },
-                                sm: { width: "auto", padding: "0 50px" },
-                            }}
-                            size="small"
-                            onClick={() => {
-                                setAuthed(false);
-                                setUser({});
-                                localStorage.removeItem("auth-token");
-                            }}
-                        >
-                            Logout
-                        </Button>
-                    )}
-                </Box>
-                <Typography
-                    sx={{
-                        opacity: nameTaken || changedName ? 1 : 0,
-                        transition: "all 0.2s",
-                    }}
-                    color={nameTaken ? red[600] : blueGrey[700]}
-                    fontSize={14}
-                >
-                    <b>
-                        {nameTaken
-                            ? "This name is taken/invalid"
-                            : "Name has been edited, please save to proceed"}
-                    </b>
-                </Typography>
-                <Box
-                    display="flex"
-                    mt={2}
-                    flexWrap={{ xs: "wrap", sm: "nowrap" }}
-                >
-                    <Box display="flex" alignItems="center" mr={10}>
+                        <b>
+                            {nameTaken
+                                ? "This name is taken/invalid"
+                                : "Name has been edited, please save to proceed"}
+                        </b>
+                    </Typography>
+                    <Box
+                        display="flex"
+                        mt={{ xs: 1, sm: 2 }}
+                        flexWrap={{ xs: "wrap", sm: "nowrap" }}
+                    >
                         <Box
-                            width={16}
-                            height={16}
-                            border="1px solid"
-                            borderColor="primary.900"
-                            bgcolor="primary.500"
-                        ></Box>
-                        <Typography ml={1}>Your availability</Typography>
-                    </Box>
-
-                    <Box display="flex" alignItems="center" mr={10}>
-                        <Box
-                            width={16}
-                            height={16}
-                            border="1px solid"
-                            borderColor="primary.900"
-                            bgcolor="primary.300"
-                        ></Box>
-                        <Typography ml={1}>Group availability</Typography>
-                    </Box>
-
-                    <Box display="flex" alignItems="center" mr={10}>
-                        <Box
-                            width={16}
-                            height={16}
-                            border="1px solid"
-                            borderColor="primary.900"
-                            bgcolor="transparent"
-                        ></Box>
-                        <Typography ml={1}>No one available</Typography>
-                    </Box>
-                </Box>
-                <Typography fontWeight={500} fontSize={16} mt={2}>
-                    Click/tap on the times and dates that suit you below
-                </Typography>
-                <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    mt={4}
-                    pr={6}
-                >
-                    {dates.length !== 0 && event && event.type !== "day" && (
-                        <Typography fontSize={20} mr={3}>
-                            {months[dates[0].getMonth()]}&nbsp;
-                            {dates[0].getDate()} -{" "}
-                            {months[dates[dates.length - 1].getMonth()]}
-                            &nbsp;
-                            {dates[dates.length - 1].getDate()}
-                        </Typography>
-                    )}
-
-                    {event && event.type !== "week" && event.type !== "day" && (
-                        <Box display="flex" alignItems="center">
-                            <Button
-                                variant="text"
-                                onClick={() => changeDates(false)}
-                            >
-                                <ChevronLeft />
-                            </Button>
-                            <Button
-                                variant="text"
-                                onClick={() => changeDates(true)}
-                            >
-                                <ChevronRight />
-                            </Button>
+                            display="flex"
+                            alignItems="center"
+                            mr={{ xs: 3, sm: 10 }}
+                        >
+                            <Box
+                                width={16}
+                                height={16}
+                                border="1px solid"
+                                borderColor="primary.900"
+                                bgcolor="primary.500"
+                            ></Box>
+                            <Typography ml={1}>Your availability</Typography>
                         </Box>
-                    )}
+
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mr={{ xs: 3, sm: 10 }}
+                        >
+                            <Box
+                                width={16}
+                                height={16}
+                                border="1px solid"
+                                borderColor="primary.900"
+                                bgcolor="primary.300"
+                            ></Box>
+                            <Typography ml={1}>Group availability</Typography>
+                        </Box>
+
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mr={{ xs: 3, sm: 10 }}
+                        >
+                            <Box
+                                width={16}
+                                height={16}
+                                border="1px solid"
+                                borderColor="primary.900"
+                                bgcolor="transparent"
+                            ></Box>
+                            <Typography ml={1}>No one available</Typography>
+                        </Box>
+                    </Box>
+                    <Typography
+                        fontWeight={500}
+                        fontSize={{ xs: 14, sm: 16 }}
+                        mt={2}
+                    >
+                        Click/tap on the times and dates that suit you below
+                    </Typography>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        width="100%"
+                        mt={{ xs: 2, sm: 4 }}
+                        pr={{ xs: 0, sm: 6 }}
+                    >
+                        {dates.length !== 0 &&
+                            event &&
+                            event.type !== "day" && (
+                                <Typography
+                                    fontSize={{ xs: 16, sm: 20 }}
+                                    mr={3}
+                                >
+                                    {months[dates[0].getMonth()]}&nbsp;
+                                    {dates[0].getDate()} -{" "}
+                                    {months[dates[dates.length - 1].getMonth()]}
+                                    &nbsp;
+                                    {dates[dates.length - 1].getDate()}
+                                </Typography>
+                            )}
+
+                        {event &&
+                            event.type !== "week" &&
+                            event.type !== "day" && (
+                                <Box display="flex" alignItems="center">
+                                    <Button
+                                        variant="text"
+                                        onClick={() => changeDates(false)}
+                                    >
+                                        <ChevronLeft />
+                                    </Button>
+                                    <Button
+                                        variant="text"
+                                        onClick={() => changeDates(true)}
+                                    >
+                                        <ChevronRight />
+                                    </Button>
+                                </Box>
+                            )}
+                    </Box>
                 </Box>
 
                 <Box
-                    mt={1}
+                    mt={fullScreen ? 0 : 1}
                     id="calendar-container"
-                    width="100%"
-                    height="68vh"
+                    height={fullScreen ? "100vh" : { xs: "54vh", sm: "68vh" }}
                     overflow="scroll"
-                    position="relative"
-                    display={{ xs: "none", sm: "inline-block" }}
+                    position={fullScreen ? "fixed" : "relative"}
+                    top={0}
+                    left={0}
                     sx={{
                         pointerEvents:
                             nameTaken || event.name === undefined || changedName
@@ -538,6 +579,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             nameTaken || event.name === undefined || changedName
                                 ? 0.3
                                 : 1,
+                        width: fullScreen
+                            ? "100vw"
+                            : { xs: "100%", sm: "calc(100% - 2)" },
+                        zIndex: 20,
                     }}
                 >
                     <Grid
@@ -546,21 +591,31 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         width={
                             event && event.type === "day"
                                 ? `96%`
-                                : `${dates.length * 15}%`
+                                : {
+                                      xs: `${dates.length * 35}%`,
+                                      sm: `${dates.length * 15}%`,
+                                  }
                         }
                         columns={dates.length + 1}
                     >
                         {/* COLUMN 1 */}
                         <Grid
                             item
-                            width="3.5%"
+                            width={{ xs: "5%", sm: "3.5%" }}
                             position="sticky"
                             left="0"
                             top="0"
                             zIndex={10}
                         >
                             {/* NULL BOX */}
-                            <Box height="5vh"></Box>
+                            <Box
+                                height="5vh"
+                                sx={{
+                                    background: fullScreen
+                                        ? "white"
+                                        : "transparent",
+                                }}
+                            ></Box>
                             {/* SLOTS */}
                             {slots.map((slot) => (
                                 <Grid item key={slot}>
@@ -571,16 +626,21 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                 : "8vh"
                                         }
                                         bgcolor="white"
+                                        pl={fullScreen ? { xs: 0.8, sm: 2 } : 1}
                                     >
                                         <Typography>{slot}</Typography>
                                     </Box>
                                 </Grid>
                             ))}
                         </Grid>
+                        {/* REST COLUMNS */}
                         {dates.map((date) => (
                             <Grid
                                 item
-                                width={`${96.5 / dates.length}%`}
+                                width={{
+                                    xs: `${95 / dates.length}%`,
+                                    sm: `${96.5 / dates.length}%`,
+                                }}
                                 key={date.getDate()}
                             >
                                 <Box
@@ -745,6 +805,25 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         ))}
                     </Grid>
                 </Box>
+            </Box>
+
+            <Box
+                sx={{
+                    position: "fixed",
+                    bottom: 20,
+                    right: 20,
+                    zIndex: 30,
+                    padding: "5px",
+                }}
+                onClick={() => setFullScreen(!fullScreen)}
+            >
+                <Fab
+                    sx={{ color: "#fff" }}
+                    color="primary"
+                    aria-label="full-screen"
+                >
+                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                </Fab>
             </Box>
 
             {/* ERR */}
