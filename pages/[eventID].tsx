@@ -280,6 +280,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             dts.push(new Date(newDate));
                         }
 
+                        if (meetData.type === "day" && meetData.date)
+                            return setDates([new Date(meetData.date)]);
                         setDates(dts);
                     } else {
                         window.location.href = "/";
@@ -581,7 +583,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                 : 1,
                         width: fullScreen
                             ? "100vw"
-                            : { xs: "100%", sm: "calc(100% - 2)" },
+                            : {
+                                  xs: "100%",
+                                  sm: "calc(100% - 2)",
+                              },
                         zIndex: 20,
                     }}
                 >
@@ -590,7 +595,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         spacing={0}
                         width={
                             event && event.type === "day"
-                                ? `96%`
+                                ? "100%"
                                 : {
                                       xs: `${dates.length * 35}%`,
                                       sm: `${dates.length * 15}%`,
@@ -601,7 +606,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                         {/* COLUMN 1 */}
                         <Grid
                             item
-                            width={{ xs: "5%", sm: "3.5%" }}
+                            width={{
+                                xs:
+                                    event && event.type === "day"
+                                        ? "10%"
+                                        : "5%",
+                                sm:
+                                    event && event.type === "day"
+                                        ? "5%"
+                                        : "3.5%",
+                            }}
                             position="sticky"
                             left="0"
                             top="0"
@@ -628,7 +642,11 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                         bgcolor="white"
                                         pl={fullScreen ? { xs: 0.8, sm: 2 } : 1}
                                     >
-                                        <Typography>{slot}</Typography>
+                                        <Typography
+                                            fontSize={{ xs: 12, sm: 16 }}
+                                        >
+                                            {slot}
+                                        </Typography>
                                     </Box>
                                 </Grid>
                             ))}
@@ -638,8 +656,14 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             <Grid
                                 item
                                 width={{
-                                    xs: `${95 / dates.length}%`,
-                                    sm: `${96.5 / dates.length}%`,
+                                    xs:
+                                        event && event.type === "day"
+                                            ? "90%"
+                                            : `${95 / dates.length}%`,
+                                    sm:
+                                        event && event.type === "day"
+                                            ? "95%"
+                                            : `${96.5 / dates.length}%`,
                                 }}
                                 key={date.getDate()}
                             >

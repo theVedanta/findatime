@@ -188,10 +188,13 @@ const Index = () => {
                                     views={["day"]}
                                     value={date}
                                     onChange={(val: any) => {
-                                        setDate(new Date(val.$d));
+                                        val && setDate(new Date(val.$d));
                                     }}
                                     renderInput={(params) => (
-                                        <TextField {...params} />
+                                        <TextField
+                                            sx={{ svg: { color: "#000" } }}
+                                            {...params}
+                                        />
                                     )}
                                 />
                             </LocalizationProvider>
