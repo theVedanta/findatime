@@ -55,6 +55,7 @@ const Nav = ({
                 anchor="left"
                 open={drawerOpen}
                 onClose={() => setDrawerOpen(false)}
+                onClick={() => setDrawerOpen(false)}
             >
                 <Typography
                     fontSize={40}
