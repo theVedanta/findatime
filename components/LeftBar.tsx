@@ -35,7 +35,7 @@ interface User {
     color: string;
 }
 
-const LeftBar = ({ event }: { event: Meeting }) => {
+const LeftBar = ({ event, tab }: { event: Meeting; tab: boolean }) => {
     const [grpMembers, setGrpMembers] = useState<User[]>([]);
     const [copied, setCopied] = useState(false);
     const [bestTimes, setBestTimes] = useState<string[]>([]);
@@ -121,26 +121,28 @@ const LeftBar = ({ event }: { event: Meeting }) => {
 
     return (
         <Box
-            position="fixed"
+            position={{ xs: "static", sm: "fixed" }}
             left={0}
             top={0}
-            height="100vh"
-            width="24%"
+            height={{ xs: "auto", sm: "100vh" }}
+            width={{ xs: "100%", sm: "24%" }}
             borderRight="2px solid"
             borderColor="primary.900"
             zIndex={10}
-            pt={8}
+            pt={{ xs: 0, sm: 8 }}
             pb={2}
             px={4}
             bgcolor="white"
-            display={{ xs: "none", sm: "flex" }}
+            display={{ xs: !tab ? "flex" : "none", sm: "flex" }}
             flexDirection="column"
             justifyContent="space-between"
         >
             <Box>
-                <Typography mt={3} mb={2} fontWeight={400} fontSize={28}>
-                    Meeting Info
-                </Typography>
+                {tab && (
+                    <Typography mt={3} mb={2} fontWeight={400} fontSize={28}>
+                        Meeting Info
+                    </Typography>
+                )}
 
                 <Typography
                     display="flex"
@@ -160,7 +162,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                     {event && event.note && <>Note: {event.note}</>}
                 </Typography>
 
-                <Typography mt={4} mb={1} fontSize={18}>
+                <Typography mt={{ xs: 1, sm: 4 }} mb={1} fontSize={18}>
                     Event Poll link
                 </Typography>
                 <Box
@@ -267,7 +269,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                         <Typography
                             display="flex"
                             alignItems="center"
-                            mt={5}
+                            mt={{ xs: 3, sm: 5 }}
                             mb={1}
                             color="primary.500"
                             fontSize={18}
@@ -286,8 +288,8 @@ const LeftBar = ({ event }: { event: Meeting }) => {
 
                 {grpMembers && grpMembers.length !== 0 && (
                     <Box
-                        mt={6}
-                        pb={4}
+                        mt={{ xs: 3, sm: 6 }}
+                        pb={{ xs: 2, sm: 4 }}
                         id="user-section"
                         maxHeight={275}
                         overflow="scroll"
@@ -330,7 +332,7 @@ const LeftBar = ({ event }: { event: Meeting }) => {
                 )}
             </Box>
 
-            <Box>
+            <Box mt={{ xs: 3, sm: 0 }}>
                 <Button sx={{ marginBottom: 2 }}>
                     <MailOutline />
                     &nbsp;&nbsp;Email Reminder

@@ -22,7 +22,7 @@ import db from "../db";
 import { addDoc, collection } from "firebase/firestore";
 import { Meeting } from "../types";
 
-const Index = () => {
+const Index = ({ setAuthed, setUser, authed }: any) => {
     const [duration, setDuration] = useState("1 Hour");
     const [timezone, setTimezone] = useState("India (GMT+5)");
     const [type, setType] = useState("specific");
@@ -78,7 +78,7 @@ const Index = () => {
 
     return (
         <>
-            <Nav />
+            <Nav authed={authed} setAuthed={setAuthed} setUser={setUser} />
 
             <Box
                 mt={{ xs: 10, sm: 12, xl: 16 }}
@@ -171,7 +171,11 @@ const Index = () => {
                     </RadioGroup>
                 </FormControl>
                 <Typography fontStyle="italic" mt={2}>
-                    Let all participants choose times for one specific day.
+                    {type === "day"
+                        ? "Let all participants choose times for one specific day."
+                        : type === "week"
+                        ? "Let participants select from the days of the week"
+                        : "Let participants select from any day"}
                 </Typography>
 
                 {type === "day" && (
