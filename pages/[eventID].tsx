@@ -424,6 +424,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                         width: { xs: "100%", sm: "30%" },
                                         marginRight: { xs: 0, sm: 3.6 },
                                         mb: { xs: 2, sm: 0 },
+                                        display: "none",
                                     }}
                                 >
                                     <InputLabel
@@ -467,21 +468,24 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     </Button>
                                 )}
                             </Box>
-                            <Typography
-                                sx={{
-                                    opacity: nameTaken || changedName ? 1 : 0,
-                                    transition: "all 0.2s",
-                                }}
-                                color={nameTaken ? red[600] : blueGrey[700]}
-                                fontSize={14}
-                                mt={{ xs: 1, sm: 0 }}
-                            >
-                                <b>
-                                    {nameTaken
-                                        ? "This name is taken/invalid"
-                                        : "Name has been edited, please save to proceed"}
-                                </b>
-                            </Typography>
+                            {!authed && (
+                                <Typography
+                                    sx={{
+                                        opacity:
+                                            nameTaken || changedName ? 1 : 0,
+                                        transition: "all 0.2s",
+                                    }}
+                                    color={nameTaken ? red[600] : blueGrey[700]}
+                                    fontSize={{ xs: 12, sm: 14 }}
+                                    mt={{ xs: 1, sm: 0 }}
+                                >
+                                    <b>
+                                        {nameTaken
+                                            ? "This name is taken/invalid"
+                                            : "Name has been edited, please save to proceed"}
+                                    </b>
+                                </Typography>
+                            )}
                             <Box
                                 display="flex"
                                 mt={{ xs: 1, sm: 2 }}
@@ -493,13 +497,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     mr={{ xs: 3, sm: 10 }}
                                 >
                                     <Box
-                                        width={16}
-                                        height={16}
+                                        width={{ xs: 13, sm: 16 }}
+                                        height={{ xs: 13, sm: 16 }}
                                         border="1px solid"
                                         borderColor="primary.900"
                                         bgcolor="primary.500"
                                     ></Box>
-                                    <Typography ml={1}>
+                                    <Typography
+                                        fontSize={{ xs: 14, sm: 16 }}
+                                        ml={1}
+                                    >
                                         Your availability
                                     </Typography>
                                 </Box>
@@ -510,13 +517,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     mr={{ xs: 3, sm: 10 }}
                                 >
                                     <Box
-                                        width={16}
-                                        height={16}
+                                        width={{ xs: 13, sm: 16 }}
+                                        height={{ xs: 13, sm: 16 }}
                                         border="1px solid"
                                         borderColor="primary.900"
                                         bgcolor="primary.300"
                                     ></Box>
-                                    <Typography ml={1}>
+                                    <Typography
+                                        fontSize={{ xs: 14, sm: 16 }}
+                                        ml={1}
+                                    >
                                         Group availability
                                     </Typography>
                                 </Box>
@@ -527,13 +537,16 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                     mr={{ xs: 3, sm: 10 }}
                                 >
                                     <Box
-                                        width={16}
-                                        height={16}
+                                        width={{ xs: 13, sm: 16 }}
+                                        height={{ xs: 13, sm: 16 }}
                                         border="1px solid"
                                         borderColor="primary.900"
                                         bgcolor="transparent"
                                     ></Box>
-                                    <Typography ml={1}>
+                                    <Typography
+                                        fontSize={{ xs: 14, sm: 16 }}
+                                        ml={1}
+                                    >
                                         No one available
                                     </Typography>
                                 </Box>
@@ -667,7 +680,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                 >
                                     {/* NULL BOX */}
                                     <Box
-                                        height="45px"
+                                        height="40px"
                                         sx={{
                                             background: fullScreen
                                                 ? "white"
@@ -683,7 +696,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                     event &&
                                                     event.type === "day"
                                                         ? "65px"
-                                                        : "85px"
+                                                        : {
+                                                              xs: "70px",
+                                                              sm: "85px",
+                                                          }
                                                 }
                                                 bgcolor="white"
                                                 pl={
@@ -725,13 +741,15 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                             display="flex"
                                             justifyContent="center"
                                             alignItems="center"
-                                            height="45px"
+                                            height="40px"
                                             position="sticky"
                                             top="0"
                                             zIndex={10}
                                             bgcolor="white"
                                         >
-                                            <Typography>
+                                            <Typography
+                                                fontSize={{ xs: 14, sm: 16 }}
+                                            >
                                                 {(event &&
                                                     event.type ===
                                                         "specific") ||
@@ -761,7 +779,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                         event &&
                                                         event.type === "day"
                                                             ? "65px"
-                                                            : "85px"
+                                                            : {
+                                                                  xs: "70px",
+                                                                  sm: "85px",
+                                                              }
                                                     }
                                                     display="flex"
                                                     flexDirection="column"

@@ -128,7 +128,7 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                         </Select>
                     </FormControl>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <FormControl fullWidth>
+                    <FormControl sx={{ visibility: "hidden" }} fullWidth>
                         <InputLabel required id="time-zone">
                             Time zone
                         </InputLabel>

@@ -149,6 +149,7 @@ const LeftBar = ({ event, tab }: { event: Meeting; tab: boolean }) => {
                     alignItems="center"
                     fontWeight={500}
                     fontSize={18}
+                    mb={{ xs: 2, sm: 0 }}
                 >
                     <AccessTimeOutlinedIcon />
                     &nbsp;Duration: {event && event.duration}

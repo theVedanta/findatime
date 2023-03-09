@@ -97,8 +97,8 @@ const Auth = ({
             ></Box>
 
             <Box
-                width="30vw"
-                p={6}
+                width={{ xs: "100vw", sm: "30vw" }}
+                p={{ xs: 4, sm: 6 }}
                 bgcolor="#fff"
                 zIndex={50}
                 sx={{
