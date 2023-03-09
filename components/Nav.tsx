@@ -27,9 +27,9 @@ const Nav = ({
 
     const links = {
         "Plan a Meeting": { link: "/", icon: <EventAvailableIcon /> },
-        "My meetings": { link: "/my-meetings", icon: <MeetingRoomOutlined /> },
-        Account: { link: "/account", icon: <Person2Outlined /> },
-        "Support the project": { link: "/", icon: <FavoriteBorderOutlined /> },
+        // "My meetings": { link: "/my-meetings", icon: <MeetingRoomOutlined /> },
+        // Account: { link: "/account", icon: <Person2Outlined /> },
+        // "Support the project": { link: "/", icon: <FavoriteBorderOutlined /> },
     };
 
     return (

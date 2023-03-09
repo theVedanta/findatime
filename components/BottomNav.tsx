@@ -19,13 +19,18 @@ const BottomNav = () => {
             bottom={0}
             left={0}
         >
-            <Box display="flex" width={{ xs: "50%", sm: "33.33333333%" }}>
+            <Box
+                sx={{ visibility: "hidden" }}
+                display="flex"
+                width={{ xs: "50%", sm: "33.33333333%" }}
+            >
                 <Typography display="flex" alignItems="center">
                     <InfoOutlinedIcon />
                     &nbsp;&nbsp;Learn More
                 </Typography>
             </Box>
             <Typography
+                sx={{ visibility: "hidden" }}
                 display="flex"
                 alignItems="center"
                 width={{ xs: "50%", sm: "33.33333333%" }}
