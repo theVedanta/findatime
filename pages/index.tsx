@@ -85,7 +85,11 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                 px={{ xs: 4, sm: 12, lg: 36, xl: 64 }}
                 mb={{ xs: 8, sm: 0 }}
             >
-                <Typography mb={4} fontWeight={400} fontSize={28}>
+                <Typography
+                    mb={{ xs: 2, sm: 4 }}
+                    fontWeight={400}
+                    fontSize={{ xs: 22, sm: 28 }}
+                >
                     Meeting Info
                 </Typography>
                 <TextField
@@ -99,9 +103,13 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                     multiline
                     rows={3}
                     maxRows={6}
-                    sx={{ marginTop: "26px" }}
+                    sx={{ marginTop: { xs: "20px", sm: "26px" } }}
                 />
-                <Box display="flex" width="full" sx={{ marginTop: "26px" }}>
+                <Box
+                    display="flex"
+                    width="full"
+                    sx={{ marginTop: { xs: "20px", sm: "26px" } }}
+                >
                     <FormControl fullWidth>
                         <InputLabel required id="duration">
                             Duration
@@ -140,7 +148,12 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                     </FormControl>
                 </Box>
 
-                <Typography mt={6} mb={2} fontWeight={400} fontSize={24}>
+                <Typography
+                    mt={{ xs: 2, sm: 6 }}
+                    mb={{ xs: 1, sm: 2 }}
+                    fontWeight={400}
+                    fontSize={{ xs: 20, sm: 24 }}
+                >
                     Meeting Poll Type
                 </Typography>
                 <FormControl>
@@ -170,7 +183,7 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                         />
                     </RadioGroup>
                 </FormControl>
-                <Typography fontStyle="italic" mt={2}>
+                <Typography fontStyle="italic" mt={{ xs: 1, sm: 2 }}>
                     {type === "day"
                         ? "Let all participants choose times for one specific day."
                         : type === "week"
@@ -180,7 +193,11 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
 
                 {type === "day" && (
                     <>
-                        <Typography mt={5} mb={1} fontWeight={600}>
+                        <Typography
+                            mt={{ xs: 2, sm: 5 }}
+                            mb={1}
+                            fontWeight={600}
+                        >
                             Pick a date for your meet
                         </Typography>
                         <Box width="50%" mt={2}>
@@ -208,7 +225,7 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
 
                 <Button
                     onClick={createEvent}
-                    sx={{ marginTop: 5 }}
+                    sx={{ marginTop: { xs: 2, sm: 5 } }}
                     disabled={loading}
                 >
                     Create Event

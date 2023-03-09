@@ -606,7 +606,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                             height={
                                 fullScreen
                                     ? "100vh"
-                                    : { xs: "54vh", sm: "68vh" }
+                                    : { xs: "500px", sm: "690px" }
                             }
                             overflow="scroll"
                             position={fullScreen ? "fixed" : "relative"}
@@ -667,22 +667,23 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                 >
                                     {/* NULL BOX */}
                                     <Box
-                                        height="5vh"
+                                        height="45px"
                                         sx={{
                                             background: fullScreen
                                                 ? "white"
                                                 : "transparent",
                                         }}
                                     ></Box>
-                                    {/* SLOTS */}
+
+                                    {/* SLOT BOXES */}
                                     {slots.map((slot) => (
                                         <Grid item key={slot}>
                                             <Box
                                                 height={
                                                     event &&
                                                     event.type === "day"
-                                                        ? "6vh"
-                                                        : "8vh"
+                                                        ? "65px"
+                                                        : "85px"
                                                 }
                                                 bgcolor="white"
                                                 pl={
@@ -703,7 +704,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                         </Grid>
                                     ))}
                                 </Grid>
-                                {/* REST COLUMNS */}
+
+                                {/* DATE BOXES */}
                                 {dates.map((date) => (
                                     <Grid
                                         item
@@ -723,7 +725,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                             display="flex"
                                             justifyContent="center"
                                             alignItems="center"
-                                            height="5vh"
+                                            height="45px"
                                             position="sticky"
                                             top="0"
                                             zIndex={10}
@@ -749,18 +751,20 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                 )}
                                             </Typography>
                                         </Box>
+
+                                        {/* UNIT BOXES */}
                                         {slots.map((slot) => (
                                             <Grid item width="100%" key={slot}>
                                                 <Box
-                                                    // bgcolor="primary.200"
-                                                    border="0.5px solid"
-                                                    borderColor="primary.800"
+                                                    border="0.2px solid rgba(0, 0, 0, 0.2)"
                                                     height={
                                                         event &&
                                                         event.type === "day"
-                                                            ? "6vh"
-                                                            : "8vh"
+                                                            ? "65px"
+                                                            : "85px"
                                                     }
+                                                    display="flex"
+                                                    flexDirection="column"
                                                     width="100%"
                                                     bgcolor="primary.200"
                                                 >
@@ -815,9 +819,8 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                                     slot,
                                                                     i
                                                                 ) &&
-                                                                "6px solid rgba(0, 0, 0, 0.25)"
+                                                                "6px solid rgba(0, 0, 0, 0.2)"
                                                             }
-                                                            borderBottom="0.1px solid #fff"
                                                             width="100%"
                                                             height={
                                                                 event &&
@@ -836,9 +839,19 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                                     sx={{
                                                                         "& .MuiAvatar-root":
                                                                             {
-                                                                                width: 24,
-                                                                                height: 24,
-                                                                                fontSize: 14,
+                                                                                width: {
+                                                                                    xs: 18,
+                                                                                    sm: 24,
+                                                                                },
+                                                                                height: {
+                                                                                    xs: 18,
+                                                                                    sm: 24,
+                                                                                },
+                                                                                fontSize:
+                                                                                    {
+                                                                                        xs: 10,
+                                                                                        sm: 14,
+                                                                                    },
                                                                             },
                                                                     }}
                                                                     max={3}
