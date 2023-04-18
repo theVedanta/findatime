@@ -14,17 +14,21 @@ import {
     Typography,
 } from "@mui/material";
 import Nav from "../components/Nav";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import BottomNav from "../components/BottomNav";
 import db from "../db";
 import { addDoc, collection } from "firebase/firestore";
 import { Meeting } from "../types";
+import { tzs } from "../base";
+import { useRouter } from "next/router";
 
 const Index = ({ setAuthed, setUser, authed }: any) => {
     const [duration, setDuration] = useState("1 Hour");
-    const [timezone, setTimezone] = useState("India (GMT+5)");
+    const [timezone, setTimezone] = useState<string>(
+        ((new Date().getTimezoneOffset() / 60) * -1).toString()
+    );
     const [type, setType] = useState("specific");
     const [date, setDate] = useState(new Date());
     const [name, setName] = useState("");
@@ -32,13 +36,13 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
     const [err, setErr] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const showErr = (msgToSet: string) => {
         setErrMsg(msgToSet);
         setErr(true);
         setTimeout(() => setErr(false), 5000);
     };
-
     const handleClose = (
         event: React.SyntheticEvent | Event,
         reason?: string
@@ -76,6 +80,10 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
         }
     };
 
+    useEffect(() => {
+        process.env.NEXT_PUBLIC_NODE_ENV !== "dev" && router.push("/about");
+    }, [router]);
+
     return (
         <>
             <Nav authed={authed} setAuthed={setAuthed} setUser={setUser} />
@@ -102,7 +110,6 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                     onChange={(e) => setNote(e.target.value.trim())}
                     multiline
                     rows={3}
-                    maxRows={6}
                     sx={{ marginTop: { xs: "20px", sm: "26px" } }}
                 />
                 <Box
@@ -128,12 +135,12 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                         </Select>
                     </FormControl>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <FormControl sx={{ visibility: "hidden" }} fullWidth>
+                    <FormControl fullWidth>
                         <InputLabel required id="time-zone">
-                            Time zone
+                            Timezone
                         </InputLabel>
                         <Select
-                            required
+                            // native
                             labelId="time-zone"
                             name="time-zone"
                             id="time-zone"
@@ -141,9 +148,11 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
                             value={timezone}
                             onChange={(e) => setTimezone(e.target.value)}
                         >
-                            <MenuItem value={"India (GMT+5)"}>
-                                India (GMT+5)
-                            </MenuItem>
+                            {tzs.map((tz) => (
+                                <MenuItem value={tz.value} key={tz.value}>
+                                    {tz.label}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Box>

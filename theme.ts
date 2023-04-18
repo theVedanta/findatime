@@ -6,7 +6,9 @@ const theme = createTheme({
             100: "white",
             200: "#F5F5F5",
             300: "#EBE28F", // Yellow
-            500: "#74B78F",
+            400: "#FF8D4E", // Orange
+            500: "#74B78F", // green
+            600: "#333844",
             900: "#313131",
             800: "rgba(0, 0, 0, 0.2)",
         },

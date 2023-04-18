@@ -8,7 +8,7 @@ const firebaseConfig = {
     projectId: "findatime-5b83e",
     storageBucket: "findatime-5b83e.appspot.com",
     messagingSenderId: "247876517457",
-    appId: "1:247876517457:web:d57019b327b2f617a08270",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     measurementId: "G-LCP02CKVJN",
 };
 const app = initializeApp(firebaseConfig);

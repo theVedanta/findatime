@@ -129,8 +129,8 @@ const Nav = ({
 
             {!name ? (
                 <Box display="flex" alignItems="center">
-                    <EventAvailableIcon />
-                    &nbsp;
+                    {/* <EventAvailableIcon />
+                    &nbsp; */}
                     <Typography fontWeight={500} fontSize={22}>
                         Plan a Meeting
                     </Typography>
