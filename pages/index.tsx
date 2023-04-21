@@ -107,7 +107,7 @@ const About = ({ authed }: any) => {
                 alignItems="center"
                 mt={{ xs: 0, sm: 6 }}
                 pt={{ xs: 6, sm: 0 }}
-                mb={14}
+                mb={{ xs: 4, sm: 14 }}
                 textAlign="center"
             >
                 <Typography
@@ -182,13 +182,15 @@ const About = ({ authed }: any) => {
                     </Button>
                 </Box>
 
-                <Image
-                    src="/assets/lap.svg"
-                    alt="Laptop"
-                    width={800}
-                    height={400}
-                    style={{ width: "100%" }}
-                />
+                <Box
+                    sx={{
+                        position: "relative",
+                        width: "100%",
+                        height: { xs: "300px", sm: "500px" },
+                    }}
+                >
+                    <Image src="/assets/lap.svg" alt="Laptop" fill={true} />
+                </Box>
             </Box>
 
             <Box
@@ -280,8 +282,8 @@ const About = ({ authed }: any) => {
                         <Image
                             src="/assets/scrib/3.svg"
                             alt="Scribble"
-                            width={200}
-                            height={160}
+                            width={170}
+                            height={130}
                             style={{
                                 objectFit: "scale-down",
                             }}
@@ -301,8 +303,8 @@ const About = ({ authed }: any) => {
                             <Image
                                 src="/assets/scrib/3.svg"
                                 alt="Scribble"
-                                width={200}
-                                height={160}
+                                width={170}
+                                height={130}
                                 style={{
                                     objectFit: "scale-down",
                                     transform: "scaleX(-1)",
