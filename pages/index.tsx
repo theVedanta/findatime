@@ -1,31 +1,35 @@
-import { Check } from "@mui/icons-material";
+import { ArrowRightAlt, Check, Close, MenuOutlined } from "@mui/icons-material";
 import {
     Alert,
     Box,
     Button,
-    Input,
-    Link,
+    Drawer,
     TextField,
     Typography,
 } from "@mui/material";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import db from "../db";
 
-const About = ({ authed }: any) => {
+const About = () => {
     const [email, setEmail] = useState("");
     const [dis, setDis] = useState(false);
     const [alert, setAlert] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const submit = async () => {
         if (email === "") return setAlert(true);
+
         const docRef = doc(db, "emails", "VF87k96GwX1B8dOckRvn");
         const list = await getDoc(docRef);
         let emails = (list.data() as any).emails as string[];
+        if (emails.includes(email)) return setAlert(true);
         emails.push(email);
+
         updateDoc(docRef, { emails });
         setDis(true);
+        (document.querySelector("#email-field") as HTMLInputElement).value = "";
     };
 
     useEffect(() => {
@@ -44,12 +48,12 @@ const About = ({ authed }: any) => {
                     }}
                     severity="error"
                 >
-                    This is an error alert — check it out!
+                    Email already exists/is empty
                 </Alert>
             )}
             {/* NAV */}
             <Box
-                display={{ xs: "none", sm: "flex" }}
+                display="flex"
                 justifyContent="space-between"
                 alignItems="center"
                 px={{ xs: 2, sm: 10 }}
@@ -57,7 +61,7 @@ const About = ({ authed }: any) => {
                 bgcolor="primary.900"
                 sx={{ position: "fixed", top: 0, width: "100vw", zIndex: 9999 }}
             >
-                <Box display="flex">
+                <Box display={{ xs: "none", sm: "flex" }}>
                     <a href="#steps">
                         <Typography
                             sx={{
@@ -100,8 +104,81 @@ const About = ({ authed }: any) => {
                         </Typography>
                     </a>
                 </Box>
+                <Box sx={{ cursor: "pointer" }} onClick={() => setOpen(!open)}>
+                    {open ? (
+                        <Close sx={{ color: "#fff" }} />
+                    ) : (
+                        <MenuOutlined sx={{ color: "#fff" }} />
+                    )}
+
+                    <Drawer
+                        anchor="left"
+                        open={open}
+                        onClose={() => setOpen(false)}
+                        PaperProps={{ sx: { backgroundColor: "primary.900" } }}
+                    >
+                        <Box
+                            sx={{
+                                pt: 8,
+                                pl: 3,
+                                pr: 5,
+                                height: "100%",
+                            }}
+                        >
+                            <a href="#steps">
+                                <Typography
+                                    sx={{
+                                        color: "#fff",
+                                        py: 3,
+                                        fontSize: 20,
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                    mr={5}
+                                >
+                                    How it works&nbsp;
+                                    <ArrowRightAlt />
+                                </Typography>
+                            </a>
+
+                            <a href="#features">
+                                <Typography
+                                    sx={{
+                                        color: "#fff",
+                                        py: 3,
+                                        fontSize: 20,
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                    mr={5}
+                                >
+                                    Why FindaTime&nbsp;
+                                    <ArrowRightAlt />
+                                </Typography>
+                            </a>
+
+                            <a href="#join">
+                                <Typography
+                                    sx={{
+                                        color: "#fff",
+                                        py: 3,
+                                        fontSize: 20,
+                                        display: "flex",
+                                        alignItems: "center",
+                                    }}
+                                    mr={5}
+                                >
+                                    Join Waitlist&nbsp;
+                                    <ArrowRightAlt />
+                                </Typography>
+                            </a>
+                        </Box>
+                    </Drawer>
+                </Box>
                 <a href="#demo">
-                    <Button sx={{ width: "auto" }}>Watch Demo</Button>
+                    <Button size="small" sx={{ width: "auto" }}>
+                        Watch Demo
+                    </Button>
                 </a>
             </Box>
 
@@ -112,7 +189,7 @@ const About = ({ authed }: any) => {
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                pt={{ xs: 6, sm: 12 }}
+                pt={{ xs: 10, sm: 12 }}
                 mb={{ xs: 4, sm: 14 }}
                 textAlign="center"
             >
@@ -166,10 +243,12 @@ const About = ({ authed }: any) => {
                         InputProps={{
                             disableUnderline: true,
                         }}
+                        disabled={dis}
                         onChange={(e) =>
                             setEmail(e.target.value.toLowerCase().trim())
                         }
                         type="email"
+                        id="email-field"
                         required
                     />
                     <Button
@@ -184,7 +263,7 @@ const About = ({ authed }: any) => {
                         disabled={dis}
                         type="submit"
                     >
-                        Submit
+                        {dis ? <Check /> : "Submit"}
                     </Button>
                 </Box>
 
@@ -446,8 +525,13 @@ const About = ({ authed }: any) => {
                     flexDirection={{ xs: "column", sm: "row" }}
                     width="100%"
                     mb={6}
+                    px={2}
                 >
-                    <Box color="primary.500" mr={{ xs: 0, sm: 10 }}>
+                    <Box
+                        width={{ xs: "100%", sm: "50%" }}
+                        color="primary.500"
+                        mr={{ xs: 0, sm: 10 }}
+                    >
                         {[
                             "Quick & Frictionless experience",
                             "No signup required to use",
@@ -457,13 +541,13 @@ const About = ({ authed }: any) => {
                                 py={{ xs: 2, sm: 4 }}
                                 fontWeight={400}
                                 fontSize={{
-                                    xs: 18,
-                                    sm: 18,
-                                    md: 20,
-                                    lg: 26,
-                                    xl: 30,
+                                    xs: 16,
+                                    md: 18,
+                                    lg: 22,
+                                    xl: 24,
                                 }}
                                 key={i}
+                                whiteSpace={{ xs: "normal", sm: "nowrap" }}
                                 display="flex"
                                 alignItems="center"
                             >
@@ -472,7 +556,7 @@ const About = ({ authed }: any) => {
                             </Typography>
                         ))}
                     </Box>
-                    <Box color="primary.500">
+                    <Box width={{ xs: "100%", sm: "50%" }} color="primary.500">
                         {[
                             "Optimized for large groups of people",
                             "Integrations with Slack and Discord",
@@ -482,13 +566,13 @@ const About = ({ authed }: any) => {
                                 py={{ xs: 2, sm: 4 }}
                                 fontWeight={400}
                                 fontSize={{
-                                    xs: 18,
-                                    sm: 18,
-                                    md: 20,
-                                    lg: 26,
-                                    xl: 30,
+                                    xs: 16,
+                                    md: 18,
+                                    lg: 22,
+                                    xl: 24,
                                 }}
                                 key={i}
+                                whiteSpace={{ xs: "normal", sm: "nowrap" }}
                                 display="flex"
                                 alignItems="center"
                             >
