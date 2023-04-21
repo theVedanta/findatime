@@ -192,7 +192,7 @@ const About = ({ authed }: any) => {
                     sx={{
                         position: "relative",
                         width: "100%",
-                        height: { xs: "300px", sm: "500px" },
+                        height: { xs: "400px", sm: "600px" },
                     }}
                 >
                     <Image src="/assets/lap.svg" alt="Laptop" fill={true} />
