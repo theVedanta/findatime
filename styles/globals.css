@@ -7,3 +7,11 @@
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
+a {
+    text-decoration: none;
+}
+html,
+#main-index {
+    --scroll-behavior: smooth !important;
+    scroll-behavior: smooth !important;
+}

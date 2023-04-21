@@ -33,7 +33,7 @@ const About = ({ authed }: any) => {
     }, [alert]);
 
     return (
-        <Box bgcolor="primary.600">
+        <Box id="main-index" bgcolor="primary.600">
             {alert && (
                 <Alert
                     sx={{
@@ -55,58 +55,64 @@ const About = ({ authed }: any) => {
                 px={{ xs: 2, sm: 10 }}
                 py={1}
                 bgcolor="primary.900"
+                sx={{ position: "fixed", top: 0, width: "100vw", zIndex: 9999 }}
             >
                 <Box display="flex">
-                    <Link
-                        href="/"
-                        sx={{
-                            color: "#fff",
-                            textDecoration: "none",
-                            ":hover": { color: "primary.500" },
-                            transition: "all 0.3s",
-                        }}
-                        mr={5}
-                    >
-                        <Typography>How it works</Typography>
-                    </Link>
+                    <a href="#steps">
+                        <Typography
+                            sx={{
+                                color: "#fff",
+                                textDecoration: "none",
+                                ":hover": { color: "primary.500" },
+                                transition: "all 0.3s",
+                            }}
+                            mr={5}
+                        >
+                            How it works
+                        </Typography>
+                    </a>
 
-                    <Link
-                        href="/"
-                        sx={{
-                            color: "#fff",
-                            textDecoration: "none",
-                            ":hover": { color: "primary.500" },
-                            transition: "all 0.3s",
-                        }}
-                        mr={5}
-                    >
-                        <Typography>How it works</Typography>
-                    </Link>
+                    <a href="#features">
+                        <Typography
+                            sx={{
+                                color: "#fff",
+                                textDecoration: "none",
+                                ":hover": { color: "primary.500" },
+                                transition: "all 0.3s",
+                            }}
+                            mr={5}
+                        >
+                            Why FindaTime
+                        </Typography>
+                    </a>
 
-                    <Link
-                        href="/"
-                        sx={{
-                            color: "#fff",
-                            textDecoration: "none",
-                            ":hover": { color: "primary.500" },
-                            transition: "all 0.3s",
-                        }}
-                        mr={5}
-                    >
-                        <Typography>How it works</Typography>
-                    </Link>
+                    <a href="#join">
+                        <Typography
+                            sx={{
+                                color: "#fff",
+                                textDecoration: "none",
+                                ":hover": { color: "primary.500" },
+                                transition: "all 0.3s",
+                            }}
+                            mr={5}
+                        >
+                            Join Waitlist
+                        </Typography>
+                    </a>
                 </Box>
-                <Button sx={{ width: "auto" }}>Watch Demo</Button>
+                <a href="#demo">
+                    <Button sx={{ width: "auto" }}>Watch Demo</Button>
+                </a>
             </Box>
 
             {/* HERO */}
             <Box
+                id="join"
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                mt={{ xs: 0, sm: 6 }}
-                pt={{ xs: 6, sm: 0 }}
+                pt={{ xs: 6, sm: 12 }}
                 mb={{ xs: 4, sm: 14 }}
                 textAlign="center"
             >
@@ -194,6 +200,7 @@ const About = ({ authed }: any) => {
             </Box>
 
             <Box
+                id="steps"
                 pt={6}
                 px={{ xs: 4, sm: 6, lg: 32, xl: 50 }}
                 pb={20}
@@ -408,7 +415,7 @@ const About = ({ authed }: any) => {
                 </Box>
             </Box>
 
-            <Box pt={10} px={{ md: 6, lg: 20 }} pb={10}>
+            <Box id="features" pt={10} px={{ md: 6, lg: 20 }} pb={10}>
                 <Typography
                     textAlign="center"
                     color="#fff"
@@ -442,9 +449,9 @@ const About = ({ authed }: any) => {
                 >
                     <Box color="primary.500" mr={{ xs: 0, sm: 10 }}>
                         {[
-                            "Quick & Frictionless experience.",
-                            "Quick & Frictionless experience.",
-                            "Quick & Frictionless experience.",
+                            "Quick & Frictionless experience",
+                            "No signup required to use",
+                            "Easy to understand calendar visualization",
                         ].map((i) => (
                             <Typography
                                 py={{ xs: 2, sm: 4 }}
@@ -467,9 +474,9 @@ const About = ({ authed }: any) => {
                     </Box>
                     <Box color="primary.500">
                         {[
-                            "Quick & Frictionless experience.",
-                            "Quick & Frictionless experience.",
-                            "Quick & Frictionless experience.",
+                            "Optimized for large groups of people",
+                            "Integrations with Slack and Discord",
+                            "Add meetings to Google Calendar with one click.",
                         ].map((i) => (
                             <Typography
                                 py={{ xs: 2, sm: 4 }}
@@ -492,7 +499,11 @@ const About = ({ authed }: any) => {
                     </Box>
                 </Box>
 
-                <Box sx={{ position: "relative", width: "100%" }} px={2}>
+                <Box
+                    id="demo"
+                    sx={{ position: "relative", width: "100%" }}
+                    px={2}
+                >
                     <video
                         controls
                         style={{ width: "100%" }}
