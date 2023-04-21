@@ -104,7 +104,11 @@ const About = () => {
                         </Typography>
                     </a>
                 </Box>
-                <Box sx={{ cursor: "pointer" }} onClick={() => setOpen(!open)}>
+                <Box
+                    sx={{ cursor: "pointer" }}
+                    display={{ xs: "initial", sm: "none" }}
+                    onClick={() => setOpen(!open)}
+                >
                     {open ? (
                         <Close sx={{ color: "#fff" }} />
                     ) : (
@@ -129,10 +133,12 @@ const About = () => {
                                 <Typography
                                     sx={{
                                         color: "#fff",
-                                        py: 3,
+                                        pt: 4,
+                                        pb: 0.6,
                                         fontSize: 20,
                                         display: "flex",
                                         alignItems: "center",
+                                        borderBottom: "2px solid #fff",
                                     }}
                                     mr={5}
                                 >
@@ -145,10 +151,12 @@ const About = () => {
                                 <Typography
                                     sx={{
                                         color: "#fff",
-                                        py: 3,
+                                        pt: 4,
+                                        pb: 0.6,
                                         fontSize: 20,
                                         display: "flex",
                                         alignItems: "center",
+                                        borderBottom: "2px solid #fff",
                                     }}
                                     mr={5}
                                 >
@@ -161,10 +169,12 @@ const About = () => {
                                 <Typography
                                     sx={{
                                         color: "#fff",
-                                        py: 3,
+                                        pt: 4,
+                                        pb: 0.6,
                                         fontSize: 20,
                                         display: "flex",
                                         alignItems: "center",
+                                        borderBottom: "2px solid #fff",
                                     }}
                                     mr={5}
                                 >
