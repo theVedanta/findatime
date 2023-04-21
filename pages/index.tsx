@@ -492,7 +492,13 @@ const About = ({ authed }: any) => {
                     </Box>
                 </Box>
 
-                <Box width="100%" height={800} bgcolor="black"></Box>
+                <Box sx={{ position: "relative", width: "100%" }} px={2}>
+                    <video
+                        controls
+                        style={{ width: "100%" }}
+                        src="/assets/demo.mp4"
+                    ></video>
+                </Box>
             </Box>
 
             <Box
