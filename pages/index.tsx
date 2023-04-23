@@ -595,14 +595,28 @@ const About = () => {
 
                 <Box
                     id="demo"
-                    sx={{ position: "relative", width: "100%" }}
+                    sx={{
+                        position: "relative",
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        height: { xs: "200px", sm: "490px" },
+                    }}
                     px={2}
                 >
-                    <video
+                    {/* <video
                         controls
                         style={{ width: "100%" }}
                         src="/assets/demo.mp4"
-                    ></video>
+                    ></video> */}
+                    <iframe
+                        width="1000"
+                        style={{ height: "100%" }}
+                        src="https://www.youtube.com/embed/OIC58kJstsA"
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen={true}
+                    ></iframe>
                 </Box>
             </Box>
 
