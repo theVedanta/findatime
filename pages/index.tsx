@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import db from "../db";
 
@@ -217,65 +218,81 @@ const About = () => {
                 >
                     instantly
                 </Typography>
-                <Typography
-                    color="#fff"
-                    fontSize={{ md: 20, xl: 24 }}
-                    width={{ md: "40%", xl: "23%" }}
-                    fontWeight={300}
-                    mb={4}
-                >
-                    Join our waitlist to be notified when we launch soon!
-                </Typography>
+                {process.env.NEXT_PUBLIC_NODE_ENV !== "dev" ? (
+                    <>
+                        <Typography
+                            color="#fff"
+                            fontSize={{ md: 20, xl: 24 }}
+                            width={{ md: "40%", xl: "23%" }}
+                            fontWeight={300}
+                            mb={4}
+                        >
+                            Join our waitlist to be notified when we launch
+                            soon!
+                        </Typography>
 
-                <Box
-                    display="flex"
-                    sx={{
-                        width: { xs: "90%", sm: "65%", md: "50%", xl: "30%" },
-                        marginBottom: { xs: 0, sm: 2 },
-                    }}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        submit();
-                    }}
-                    component="form"
-                >
-                    <TextField
-                        placeholder="Your email"
-                        size="medium"
-                        sx={{
-                            background: "#fff",
-                            width: "75%",
-                            border: "none",
-                            borderRadius: "4px 0 0 4px",
-                            padding: "10px 22px",
-                        }}
-                        variant="standard"
-                        InputProps={{
-                            disableUnderline: true,
-                        }}
-                        disabled={dis}
-                        onChange={(e) =>
-                            setEmail(e.target.value.toLowerCase().trim())
-                        }
-                        type="email"
-                        id="email-field"
-                        required
-                    />
-                    <Button
-                        sx={{
-                            width: "25%",
-                            borderRadius: "0 4px 4px 0",
-                            ":disabled": {
-                                color: "rgba(255, 255, 255, 0.6)",
-                                cursor: "not-allowed",
-                            },
-                        }}
-                        disabled={dis}
-                        type="submit"
-                    >
-                        {dis ? <Check /> : "Submit"}
-                    </Button>
-                </Box>
+                        <Box
+                            display="flex"
+                            sx={{
+                                width: {
+                                    xs: "90%",
+                                    sm: "65%",
+                                    md: "50%",
+                                    xl: "30%",
+                                },
+                                marginBottom: { xs: 0, sm: 2 },
+                            }}
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                submit();
+                            }}
+                            component="form"
+                        >
+                            <TextField
+                                placeholder="Your email"
+                                size="medium"
+                                sx={{
+                                    background: "#fff",
+                                    width: "75%",
+                                    border: "none",
+                                    borderRadius: "4px 0 0 4px",
+                                    padding: "10px 22px",
+                                }}
+                                variant="standard"
+                                InputProps={{
+                                    disableUnderline: true,
+                                }}
+                                disabled={dis}
+                                onChange={(e) =>
+                                    setEmail(
+                                        e.target.value.toLowerCase().trim()
+                                    )
+                                }
+                                type="email"
+                                id="email-field"
+                                required
+                            />
+                            <Button
+                                sx={{
+                                    width: "25%",
+                                    borderRadius: "0 4px 4px 0",
+                                    ":disabled": {
+                                        color: "rgba(255, 255, 255, 0.6)",
+                                        cursor: "not-allowed",
+                                    },
+                                }}
+                                disabled={dis}
+                                type="submit"
+                            >
+                                {dis ? <Check /> : "Submit"}
+                            </Button>
+                        </Box>
+                    </>
+                ) : (
+                    <Link href="/create">
+                        <Button>Try it out</Button>
+                    </Link>
+                )}
 
                 <Box
                     sx={{
