@@ -141,11 +141,30 @@ const Nav = ({
                 </Typography>
             )}
 
-            <Link href="/">
-                <IconButton>
-                    <BiCalendarPlus />
-                </IconButton>
-            </Link>
+            <Box display="flex" alignItems="center">
+                {authed && (
+                    <Button
+                        sx={{
+                            padding: "8px",
+                        }}
+                        size="small"
+                        onClick={() => {
+                            setAuthed(false);
+                            setUser({});
+                            localStorage.removeItem("auth-token");
+                        }}
+                    >
+                        <ExitToAppRounded sx={{ fontSize: 20 }} />
+                        &nbsp;&nbsp;Logout
+                    </Button>
+                )}
+
+                <Link href="/">
+                    <IconButton>
+                        <BiCalendarPlus />
+                    </IconButton>
+                </Link>
+            </Box>
         </Box>
     );
 };

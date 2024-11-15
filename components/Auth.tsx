@@ -22,10 +22,12 @@ const Auth = ({
     const [username, setUsername] = useState(name);
     const [password, setPassword] = useState("");
     const [passwordConf, setPasswordConf] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const signUpUser = async (clr: string) => {
         if (nameTaken || !passMatch) return;
         if (password === "") return setPassMatch(false);
+        setLoading(true);
         const userToAdd = {
             username,
             password: await hash(password, 10),
@@ -45,11 +47,13 @@ const Auth = ({
         localStorage.removeItem("color");
         setChangedName(false);
         setAuthOpen(false);
+        setLoading(false);
     };
 
     const loginUser = async () => {
         if (!nameTaken) return;
         if (password === "") return setPassMatch(false);
+        setLoading(true);
         const userArr = await getDocs(
             query(collection(db, "users"), where("username", "==", username))
         );
@@ -74,6 +78,7 @@ const Auth = ({
             setChangedName(false);
             setAuthOpen(false);
         } else setIncrPass(true);
+        setLoading(false);
     };
 
     useEffect(
@@ -177,13 +182,23 @@ const Auth = ({
                     </Link>
                 </Typography>
 
-                <Button
-                    disabled={register ? nameTaken || !passMatch : !nameTaken}
-                    sx={{ marginTop: 5 }}
-                    onClick={register ? () => signUpUser(color) : loginUser}
-                >
-                    {register ? "Register" : "Sign in"}
-                </Button>
+                {loading ? (
+                    <Button disabled={true} sx={{ marginTop: 5 }}>
+                        Loading...
+                    </Button>
+                ) : (
+                    <Button
+                        disabled={
+                            register
+                                ? nameTaken || !passMatch
+                                : !nameTaken || loading
+                        }
+                        sx={{ marginTop: 5 }}
+                        onClick={register ? () => signUpUser(color) : loginUser}
+                    >
+                        {register ? "Register" : "Sign in"}
+                    </Button>
+                )}
             </Box>
         </>
     );
