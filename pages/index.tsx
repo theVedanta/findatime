@@ -1,11 +1,11 @@
 import { ArrowRightAlt, Check, Close, MenuOutlined } from "@mui/icons-material";
 import {
-    Alert,
-    Box,
-    Button,
-    Drawer,
-    TextField,
-    Typography,
+	Alert,
+	Box,
+	Button,
+	Drawer,
+	TextField,
+	Typography,
 } from "@mui/material";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
@@ -14,30 +14,30 @@ import { useEffect, useState } from "react";
 import db from "../db";
 
 const About = () => {
-    const [email, setEmail] = useState("");
-    const [dis, setDis] = useState(false);
-    const [alert, setAlert] = useState(false);
-    const [open, setOpen] = useState(false);
+	const [email, setEmail] = useState("");
+	const [dis, setDis] = useState(false);
+	const [alert, setAlert] = useState(false);
+	const [open, setOpen] = useState(false);
 
-    const submit = async () => {
-        if (email === "") return setAlert(true);
+	const submit = async () => {
+		if (email === "") return setAlert(true);
 
-        const docRef = doc(db, "emails", "VF87k96GwX1B8dOckRvn");
-        const list = await getDoc(docRef);
-        let emails = (list.data() as any).emails as string[];
-        if (emails.includes(email)) return setAlert(true);
-        emails.push(email);
+		const docRef = doc(db, "emails", "VF87k96GwX1B8dOckRvn");
+		const list = await getDoc(docRef);
+		let emails = (list.data() as any).emails as string[];
+		if (emails.includes(email)) return setAlert(true);
+		emails.push(email);
 
-        updateDoc(docRef, { emails });
-        setDis(true);
-        (document.querySelector("#email-field") as HTMLInputElement).value = "";
-    };
+		updateDoc(docRef, { emails });
+		setDis(true);
+		(document.querySelector("#email-field") as HTMLInputElement).value = "";
+	};
 
-    useEffect(() => {
-        setTimeout(() => setAlert(false), 4000);
-    }, [alert]);
+	useEffect(() => {
+		setTimeout(() => setAlert(false), 4000);
+	}, [alert]);
 
-    return (
+	return (
         <Box id="main-index" bgcolor="primary.600">
             {alert && (
                 <Alert
@@ -88,20 +88,6 @@ const About = () => {
                             mr={5}
                         >
                             Why FindaTime
-                        </Typography>
-                    </a>
-
-                    <a href="#join">
-                        <Typography
-                            sx={{
-                                color: "#fff",
-                                textDecoration: "none",
-                                ":hover": { color: "primary.500" },
-                                transition: "all 0.3s",
-                            }}
-                            mr={5}
-                        >
-                            Join Waitlist
                         </Typography>
                     </a>
                 </Box>
@@ -165,24 +151,6 @@ const About = () => {
                                     <ArrowRightAlt />
                                 </Typography>
                             </a>
-
-                            <a href="#join">
-                                <Typography
-                                    sx={{
-                                        color: "#fff",
-                                        pt: 4,
-                                        pb: 0.6,
-                                        fontSize: 20,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        borderBottom: "2px solid #fff",
-                                    }}
-                                    mr={5}
-                                >
-                                    Join Waitlist&nbsp;
-                                    <ArrowRightAlt />
-                                </Typography>
-                            </a>
                         </Box>
                     </Drawer>
                 </Box>
@@ -218,81 +186,9 @@ const About = () => {
                 >
                     instantly
                 </Typography>
-                {process.env.NEXT_PUBLIC_NODE_ENV !== "dev" ? (
-                    <>
-                        <Typography
-                            color="#fff"
-                            fontSize={{ md: 20, xl: 24 }}
-                            width={{ md: "40%", xl: "23%" }}
-                            fontWeight={300}
-                            mb={4}
-                        >
-                            Join our waitlist to be notified when we launch
-                            soon!
-                        </Typography>
-
-                        <Box
-                            display="flex"
-                            sx={{
-                                width: {
-                                    xs: "90%",
-                                    sm: "65%",
-                                    md: "50%",
-                                    xl: "30%",
-                                },
-                                marginBottom: { xs: 0, sm: 2 },
-                            }}
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                submit();
-                            }}
-                            component="form"
-                        >
-                            <TextField
-                                placeholder="Your email"
-                                size="medium"
-                                sx={{
-                                    background: "#fff",
-                                    width: "75%",
-                                    border: "none",
-                                    borderRadius: "4px 0 0 4px",
-                                    padding: "10px 22px",
-                                }}
-                                variant="standard"
-                                InputProps={{
-                                    disableUnderline: true,
-                                }}
-                                disabled={dis}
-                                onChange={(e) =>
-                                    setEmail(
-                                        e.target.value.toLowerCase().trim()
-                                    )
-                                }
-                                type="email"
-                                id="email-field"
-                                required
-                            />
-                            <Button
-                                sx={{
-                                    width: "25%",
-                                    borderRadius: "0 4px 4px 0",
-                                    ":disabled": {
-                                        color: "rgba(255, 255, 255, 0.6)",
-                                        cursor: "not-allowed",
-                                    },
-                                }}
-                                disabled={dis}
-                                type="submit"
-                            >
-                                {dis ? <Check /> : "Submit"}
-                            </Button>
-                        </Box>
-                    </>
-                ) : (
-                    <Link href="/create">
-                        <Button>Try it out</Button>
-                    </Link>
-                )}
+                <Link href="/create">
+                    <Button>Try it out</Button>
+                </Link>
 
                 <Box
                     sx={{
