@@ -14,7 +14,7 @@ import {
 const BASE_WEB_URL: string =
   process.env.NEXT_PUBLIC_NODE_ENV === "dev"
     ? "http://localhost:3000"
-    : "https://findatime.netlify.app";
+    : "https://findatime.thevedanta.me";
 
 const months: string[] = [
   "January",
