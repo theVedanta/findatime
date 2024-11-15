@@ -80,10 +80,6 @@ const Index = ({ setAuthed, setUser, authed }: any) => {
 		}
 	};
 
-	useEffect(() => {
-		process.env.NEXT_PUBLIC_NODE_ENV !== "dev" && router.push("/");
-	}, [router]);
-
 	return (
 		<>
 			<Nav authed={authed} setAuthed={setAuthed} setUser={setUser} />

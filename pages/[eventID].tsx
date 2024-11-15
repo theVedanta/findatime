@@ -299,10 +299,6 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
     }, [eventID]);
 
     useEffect(() => {
-        process.env.NEXT_PUBLIC_NODE_ENV !== "dev" && router.push("/");
-    }, [router]);
-
-    useEffect(() => {
         if (authed !== "check") {
             if (user && user.username) {
                 updateNameInSelections(name, user.username, user.color);
