@@ -457,7 +457,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                             width: { xs: "100%", sm: "auto" },
                                             padding: {
                                                 xs: "8px 0",
-                                                sm: "0 40px",
+                                                sm: "0 20px",
                                             },
                                         }}
                                         size="small"
@@ -680,7 +680,7 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                 >
                                     {/* NULL BOX */}
                                     <Box
-                                        height="40px"
+                                        height="20px"
                                         sx={{
                                             background: fullScreen
                                                 ? "white"
@@ -695,10 +695,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                 height={
                                                     event &&
                                                     event.type === "day"
-                                                        ? "65px"
+                                                        ? "50px"
                                                         : {
-                                                              xs: "70px",
-                                                              sm: "85px",
+                                                              xs: "50px",
+                                                              sm: "50px",
                                                           }
                                                 }
                                                 bgcolor="white"
@@ -707,11 +707,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                         ? { xs: 0.8, sm: 2 }
                                                         : 1
                                                 }
+                                                borderRight="1px solid rgba(0, 0, 0, 0.2)"
                                             >
                                                 <Typography
                                                     fontSize={{
-                                                        xs: 12,
-                                                        sm: 16,
+                                                        xs: 10,
+                                                        sm: 14,
                                                     }}
                                                 >
                                                     {slot}
@@ -741,11 +742,12 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                             display="flex"
                                             justifyContent="center"
                                             alignItems="center"
-                                            height="40px"
+                                            height="20px"
                                             position="sticky"
                                             top="0"
                                             zIndex={10}
                                             bgcolor="white"
+                                            borderBottom="1px solid rgba(0, 0, 0, 0.2)"
                                         >
                                             <Typography
                                                 fontSize={{ xs: 14, sm: 16 }}
@@ -778,10 +780,10 @@ const Event: FC = ({ authed, setAuthed, user, setUser }: any) => {
                                                     height={
                                                         event &&
                                                         event.type === "day"
-                                                            ? "65px"
+                                                            ? "50px"
                                                             : {
-                                                                  xs: "70px",
-                                                                  sm: "85px",
+                                                                  xs: "50px",
+                                                                  sm: "50px",
                                                               }
                                                     }
                                                     display="flex"
